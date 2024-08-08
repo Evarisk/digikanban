@@ -68,11 +68,57 @@ saturne_header(0,'', $title, $help_url);
 
 // Subheader
 $linkback = '<a href="' . ($backtopage ?: DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . $langs->trans('BackToModuleList') . '</a>';
-print load_fiche_titre($title, $linkback, 'digikanban_color@digikanban');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 // Configuration header
 $head = digikanban_admin_prepare_head();
 print dol_get_fiche_head($head, 'settings', $title, -1, 'digikanban_color@digikanban');
+
+print load_fiche_titre($langs->trans('GeneralConfig'), '', '');
+
+print '<table class="noborder centpercent"><tr class="liste_titre">';
+print '<td>' . $langs->trans('Name') . '</td>';
+print '<td>' . $langs->trans('Description') . '</td>';
+print '<td class="center">' . $langs->trans('Status') . '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('DefaultAllProjects');
+print '</td><td>';
+print $langs->trans('DefaultAllProjectsDescription');
+print '</td>';
+
+print '<td class="center">';
+print ajax_constantonoff('DIGIKANBAN_DEFAULT_SELECT_ALL_PROJECTS');
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('HideDoneTasks');
+print '</td><td>';
+print $langs->trans('HideDoneTasksDescription');
+print '</td>';
+
+print '<td class="center">';
+print ajax_constantonoff('DIGIKANBAN_DEFAULT_HIDE_DONE_TASKS');
+print '</td>';
+print '</tr>';
+
+print '<table>';
+
+print load_fiche_titre($langs->trans('FilterConfig'), '', '');
+
+print '<table class="noborder centpercent"><tr class="liste_titre">';
+print '<td>' . $langs->trans('Name') . '</td>';
+print '<td>' . $langs->trans('Description') . '</td>';
+print '<td class="center">' . $langs->trans('Valeur') . '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('FilterDateRange');
+print '</td><td>';
+print $langs->trans('FilterDateRangeDescription');
+print '</td>';
+
+print '<table>';
 
 $db->close();
 llxFooter();

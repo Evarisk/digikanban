@@ -28,10 +28,24 @@ DigiKanbanDescriptionLong = Création d'urls raccourcies pour YOURLS et Dolibarr
 #
 
 # Data - Donnée
+ColumnsManagement = Gestion des colonnes
+ColumnList        = Liste des colonnes
 
+# Dictionaries - Dictionnaires
+TasksColumns = Colonnes des tâches
+NotStarted   = Non démarrée
+InProgress   = En cours
+Completed    = Completée
 
 #
 # Other - Autre
 #
 
 # Data - Donnée
+DefaultAllProjects            = Sélectionner tous les projets
+DefaultAllProjectsDescription = Sélectionner par défaut tous les projets 
+HideDoneTasks                 = Cacher les tâches réalisées
+HideDoneTasksDescription      = Cacher par défaut toutes les tâches déjà réalisées
+FilterConfig                  = Configuration des filtres
+FilterDateRange               = Plage de dates par défaut
+FilterDateRangeDescription    = Plage de dates par défaut pour le filtrage des tâches

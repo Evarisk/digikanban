@@ -158,6 +158,10 @@ class modDigiKanban extends DolibarrModules
         // );
         $i = 0;
         $this->const = [
+            // CONST CONFIG
+            $i++ => ['DIGIKANBAN_DEFAULT_SELECT_ALL_PROJECTS', 'integer', 1, '', 0, 'current'],
+            $i++ => ['DIGIKANBAN_DEFAULT_HIDE_DONE_TASKS', 'integer', 1, '', 0, 'current'],
+
             // CONST MODULE
             $i++ => ['DIGIKANBAN_VERSION','chaine', $this->version, '', 0, 'current'],
             $i++ => ['DIGIKANBAN_DB_VERSION', 'chaine', $this->version, '', 0, 'current'],
@@ -179,7 +183,36 @@ class modDigiKanban extends DolibarrModules
         $this->tabs   = [];
 
         // Dictionaries.
-        $this->dictionaries = [];
+        $this->dictionaries = [
+            'langs' => 'digikanban@digikanban',
+            'tabname' => [
+                MAIN_DB_PREFIX . 'c_tasks_columns',
+            ],
+            'tablib' => [
+                'TasksColumns',
+            ],
+            'tabsql' => [
+                'SELECT t.rowid as rowid, t.ref, t.label, lowerpercent, upperpercent, t.position, t.active FROM ' . MAIN_DB_PREFIX . 'c_tasks_columns as t',
+            ],
+            'tabsqlsort' => [
+                'position ASC',
+            ],
+            'tabfield' => [
+                'ref,label,lowerpercent,upperpercent,position',
+            ],
+            'tabfieldvalue' => [
+                'ref,label,lowerpercent,upperpercent,position',
+            ],
+            'tabfieldinsert' => [
+                'ref,label,lowerpercent,upperpercent,position',
+            ],
+            'tabrowid' => [
+                'rowid',
+            ],
+            'tabcond' => [
+                $conf->digikanban->enabled,
+            ]
+        ];
 
         // Boxes/Widgets
         // Add here list of php file(s) stored in digikanban/core/boxes that contains a class to show a widget
@@ -277,13 +310,33 @@ class modDigiKanban extends DolibarrModules
     {
         global $conf;
 
-        // Permissions
-        $this->remove($options);
+        if ($this->error > 0) {
+			setEventMessages('', $this->errors, 'errors');
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
         $sql = [];
+        $result = $this->_load_tables('/digikanban/sql/');
+
+        // Load sql sub folders
+		$sqlFolder = scandir(__DIR__ . '/../../sql');
+		foreach ($sqlFolder as $subFolder) {
+			if ( ! preg_match('/\./', $subFolder)) {
+				$this->_load_tables('/digikanban/sql/' . $subFolder . '/');
+			}
+		}
+
+        if ($result < 0) {
+			return -1;
+		} // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
         dolibarr_set_const($this->db, 'DIGIKANBAN_VERSION', $this->version, 'chaine', 0, '', $conf->entity);
         dolibarr_set_const($this->db, 'DIGIKANBAN_DB_VERSION', $this->version, 'chaine', 0, '', $conf->entity);
+
+        // Permissions
+        $this->remove($options);
+
+        $result = $this->_init($sql, $options);
 
         // Create extrafields during init
 //        require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
@@ -292,7 +345,7 @@ class modDigiKanban extends DolibarrModules
 //        //$extraFields->update('label', $langs->transnoentities('Label'), 'varchar', '', 'contrat', 0, 0, 1040, '', '', '', 1);
 //        //$extraFields->addExtraField('label', $langs->transnoentities('Label'), 'varchar', 1040, '', 'contrat', 0, 0, '', '', '', '', 1);
 
-        return $this->_init($sql, $options);
+        return $result;
     }
 
     /**
