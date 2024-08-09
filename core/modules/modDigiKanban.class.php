@@ -192,7 +192,7 @@ class modDigiKanban extends DolibarrModules
                 'TasksColumns',
             ],
             'tabsql' => [
-                'SELECT t.rowid as rowid, t.ref, t.label, lowerpercent, upperpercent, t.position, t.active FROM ' . MAIN_DB_PREFIX . 'c_tasks_columns as t',
+                'SELECT t.rowid as rowid, t.ref, t.label, t.lowerpercent, t.upperpercent, t.position, t.active FROM ' . MAIN_DB_PREFIX . 'c_tasks_columns as t',
             ],
             'tabsqlsort' => [
                 'position ASC',

@@ -33,9 +33,19 @@ ColumnList        = Liste des colonnes
 
 # Dictionaries - Dictionnaires
 TasksColumns = Colonnes des tâches
-NotStarted   = Non démarrée
-InProgress   = En cours
-Completed    = Completée
+Backlog      = À Planifier
+ToDo         = À Faire
+InProgress   = En Cours
+InReview     = À Controler
+Done         = Fait
+BacklogDescription = Toutes les tâches et idées qui doivent être faites, mais qui ne sont pas encore planifiées pour être travaillées.
+ToDoDescription = Les tâches qui sont prêtes à être commencées. Ces tâches sont souvent tirées du backlog et priorisées pour être les prochaines à être traitées.
+InProgressDescription = Les tâches qui sont actuellement en train d'être travaillées. Cela permet de visualiser ce qui est en cours de réalisation.
+InReviewDescription = Les tâches qui ont été complétées mais qui nécessitent une vérification ou une approbation avant d'être considérées comme terminées.
+DoneDescription = Les tâches qui ont été complètement terminées et validées. Cela permet de suivre les progrès et de voir ce qui a été accompli.
+Lowerpercent = Pourcentage bas 
+Upperpercent = Pourcentage haut
+
 
 #
 # Other - Autre
