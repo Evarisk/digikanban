@@ -141,14 +141,16 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $usercandelete
 
 
 
-/* ------------------------ View ------------------------------ */
+/*
+ * View
+ */
 
 $morejs = array();
 $modname = "";
 llxHeader(array(), $modname,'','','','',$morejs,0,0);
 
 $linkback ="";
-digikanbanPrepareAdminHead('columns', $linkback, 'title_setup');
+$head = digikanban_admin_prepare_head();
 
 $htmlright = "";
 

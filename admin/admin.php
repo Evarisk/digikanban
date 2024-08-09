@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2015	Yassine Belkaid	<y.belkaid@nextconcept.ma>
+/* Copyright (C) 2024 EVARISK <technique@evarisk.com>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -12,23 +12,32 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *   	\file       salariescontracts/common.inc.php
- *		\ingroup    salariescontracts
- *		\brief      Common load of data
+ * \file    admin/control.php
+ * \ingroup digikanban
+ * \brief   DigiKanban control config page
  */
+
+// Load DigiKanban environment
+if (file_exists('../digikanban.main.inc.php')) {
+    require_once __DIR__ . '/../digikanban.main.inc.php';
+} elseif (file_exists('../../digikanban.main.inc.php')) {
+    require_once __DIR__ . '/../../digikanban.main.inc.php';
+} else {
+    die('Include of digikanban main fails');
+}
+
+// Load Dolibarr libraries
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+
+// Load DigiKanban libraries
+require_once __DIR__ . '/../lib/digikanban.lib.php';
 
 if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
 if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-
-// require_once realpath(dirname(__FILE__)).'/../main.inc.php';
-$res=@include("../../main.inc.php");                    // For root directory
-if (! $res && file_exists($_SERVER['DOCUMENT_ROOT']."/main.inc.php")) $res=@include($_SERVER['DOCUMENT_ROOT']."/main.inc.php"); // Use on dev env only
-if (! $res) $res=@include("../../../main.inc.php");        // For "custom" directory
-
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
@@ -38,10 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-
 dol_include_once('/digikanban/class/digikanban.class.php');
-dol_include_once('/digikanban/lib/digikanban.lib.php');
-
 
 $task  = new Task($db);
 $form = new Form($db);
@@ -140,7 +146,8 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 
 // print_fiche_titre($page_name, $linkback);
 
-digikanbanPrepareAdminHead('general', $linkback, 'title_setup');
+$head = digikanban_admin_prepare_head();
+print dol_get_fiche_head($head, $object->element, $title, -1, 'digiquali_color@digiquali');
 
 $t_typecontact = $kanban->t_typecontact;
 $searchbycontacttype = $kanban->searchbycontacttype;
