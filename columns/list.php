@@ -1,8 +1,40 @@
 <?php
+/* Copyright (C) 2024 EVARISK <technique@evarisk.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");       // For root directory
-if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php"); // For "custom"
+/**
+ * \file    admin/control.php
+ * \ingroup digikanban
+ * \brief   DigiKanban control config page
+ */
+
+// Load DigiKanban environment
+if (file_exists('../digikanban.main.inc.php')) {
+    require_once __DIR__ . '/../digikanban.main.inc.php';
+} elseif (file_exists('../../digikanban.main.inc.php')) {
+    require_once __DIR__ . '/../../digikanban.main.inc.php';
+} else {
+    die('Include of digikanban main fails');
+}
+
+// Load Dolibarr libraries
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+
+// Load DigiKanban libraries
+require_once __DIR__ . '/../lib/digikanban.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -13,7 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 dol_include_once('/digikanban/class/digikanban.class.php');
 dol_include_once('/digikanban/class/digikanban_columns.class.php');
-dol_include_once('/digikanban/lib/digikanban.lib.php');
 
 if (empty($conf->digikanban->enabled) || !$user->rights->digikanban->lire) accessforbidden();
 
@@ -231,8 +262,8 @@ $arrayofjs = array('digikanban/js/script.js');
 llxHeader('', $title, $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs);
 
 $linkback ="";
-digikanbanPrepareAdminHead('columns', $linkback, 'title_setup');
-
+$head = digikanban_admin_prepare_head();
+print dol_get_fiche_head($head, $object->element, $title, -1, 'digikanban_color@digikanban'); 
 
 $sql = "SELECT";
 $sql .= " o.rowid, o.label, o.fk_user_author, o.datec, o.tms";
