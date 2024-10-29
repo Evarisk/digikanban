@@ -138,9 +138,9 @@ class InterfaceDigiKanbanTriggers extends DolibarrTriggers
 
 				// create to do / doing / done categories with this parent
 				$categories = [
-					['label' => 'To Do', 'description' => $langs->trans('ToDo'), 'type' => $linkedObjectType, 'parent' => $result],
-					['label' => 'Doing', 'description' => $langs->trans('Doing'), 'type' => $linkedObjectType, 'parent' => $result],
-					['label' => 'Done', 'description' => $langs->trans('Done'), 'type' => $linkedObjectType, 'parent' => $result],
+					['label' => $langs->transnoentities('ToDo'), 'description' => $langs->transnoentities('ToDo'), 'type' => $linkedObjectType, 'parent' => $result],
+					['label' => $langs->transnoentities('InProgress'), 'description' => $langs->transnoentities('Doing'), 'type' => $linkedObjectType, 'parent' => $result],
+					['label' => $langs->transnoentities('Done'), 'description' => $langs->transnoentities('Done'), 'type' => $linkedObjectType, 'parent' => $result],
 				];
 
 				foreach ($categories as $category) {
