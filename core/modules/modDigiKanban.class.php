@@ -249,6 +249,18 @@ class modDigiKanban extends DolibarrModules
         $this->rights = [];
         $r = 0;
 
+		/* MODULE PERMISSIONS */
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
+		$this->rights[$r][1] = $langs->trans('LireModule', 'DigiKanban');
+		$this->rights[$r][4] = 'lire';
+		$this->rights[$r][5] = 1;
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
+		$this->rights[$r][1] = $langs->trans('ReadModule', 'DigiKanban');
+		$this->rights[$r][4] = 'read';
+		$this->rights[$r][5] = 1;
+		$r++;
+
         /* ADMINPAGE PANEL ACCESS PERMISSIONS */
         $this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
         $this->rights[$r][1] = $langs->transnoentities('ReadAdminPage', 'DigiKanban');
