@@ -315,7 +315,7 @@ class modDigiKanban extends DolibarrModules
 			'titre'    => $langs->trans('DigiKanban'),
 			'prefix'   => '<i class="fas fa-cog pictofixedwidth"></i>',
 			'leftmenu' => 'digikanban',
-			'url'      => '/digikanban/digikanbanindex.php&mainmenu=digikanban',
+			'url'      => '/digikanban/digikanbanindex.php?mainmenu=digikanban',
 			'langs'    => 'digikanban@digikanban',
 			'position' => 1000 + $r,
 			'enabled'  => 1,
