@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<div id="fullscreen-toggle" onclick="window.digikanban.kanban.toggleFullscreen()">🖵 Plein écran</div>
+<!--<div id="fullscreen-toggle" onclick="window.digikanban.kanban.toggleFullscreen()">🖵 Plein écran</div>-->
 
 <div id="kanban-board" class="kanban-board" style="background-image: url('https://www.w3schools.com/w3images/lights.jpg')">
 

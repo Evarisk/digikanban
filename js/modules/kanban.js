@@ -44,6 +44,42 @@ window.digikanban.kanban.event = function() {
 
 
 	});
+
+	// Variables for dragging
+	const kanbanBoard = document.getElementById('kanban-board');
+	let isDragging = false;
+	let startX, scrollLeft;
+
+	// Enable horizontal drag scroll
+	kanbanBoard.addEventListener('mousedown', (e) => {
+		const isClickInsideKanban = e.target.closest('.kanban-column, .kanban-column-header, .kanban-card, .kanban-select-option');
+
+		if (!isClickInsideKanban) {
+			isDragging = true;
+			kanbanBoard.classList.add('dragging');
+			startX = e.pageX - kanbanBoard.offsetLeft;
+			scrollLeft = kanbanBoard.scrollLeft;
+		}
+	});
+
+	kanbanBoard.addEventListener('mousemove', (e) => {
+		if (!isDragging) return;
+		e.preventDefault();
+		const x = e.pageX - kanbanBoard.offsetLeft;
+		const walk = (x - startX) * 1.5; // Scroll speed multiplier
+		kanbanBoard.scrollLeft = scrollLeft - walk;
+	});
+
+	// End dragging
+	kanbanBoard.addEventListener('mouseup', () => {
+		isDragging = false;
+		kanbanBoard.classList.remove('dragging');
+	});
+
+	kanbanBoard.addEventListener('mouseleave', () => {
+		isDragging = false;
+		kanbanBoard.classList.remove('dragging');
+	});
 };
 /**
  * Save the new card order after drag-and-drop.
