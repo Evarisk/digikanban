@@ -10,7 +10,7 @@
 <body>
 <div id="fullscreen-toggle" onclick="window.digikanban.kanban.toggleFullscreen()">🖵 Plein écran</div>
 
-<div id="kanban-board" class="kanban-board">
+<div id="kanban-board" class="kanban-board" style="background-image: url('https://www.w3schools.com/w3images/lights.jpg')">
 
 	<?php
 	// Cette section gère l'affichage des colonnes et des objets associés dans le Kanban
