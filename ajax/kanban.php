@@ -43,7 +43,40 @@ if ($action == 'rename_column') {
 	$categorie->fetch($category_id);
 	$categorie->label = $category_name;
 
-	$test = $categorie->update($user);
+	$categorie->update($user);
+}
+
+if ($action == 'add_column') {
+	$data = json_decode(file_get_contents("php://input"), true);
+
+	$category_name = $data['column_name'];
+	$object_type = GETPOST('object_type', 'alpha');
+
+	$categorie->fetch($category_id);
+	$sameCategories = $categorie->get_filles();
+	$sameCategoriesCounter = 0;
+	if (is_array($sameCategories) && !empty($sameCategories)) {
+		foreach($sameCategories as $sameCategory) {
+			if (strstr($sameCategory->label, $category_name)) {
+				$sameCategoriesCounter += 1;
+			}
+		}
+	}
+
+	if ($sameCategoriesCounter > 0) {
+		$category_name = $category_name . ' (' . $sameCategoriesCounter . ')';
+	}
+
+	$categorie = new Categorie($db);
+	$categorie->label = $category_name;
+	$categorie->type = $object_type;
+	$categorie->fk_parent = $category_id;
+
+	$result = $categorie->create($user);
+
+	if ($result > 0) {
+		echo $result;
+	}
 }
 
 if ($action == 'add_object_to_column') {

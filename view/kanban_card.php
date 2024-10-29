@@ -270,6 +270,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
+	print '<input hidden class="main-category-id" id="main_category_id" value="' . $categorie->id . '">';
+//	print '<input hidden id="object_selector"'
 
 	include_once __DIR__ . '/../core/tpl/kanban_view.tpl.php';
 

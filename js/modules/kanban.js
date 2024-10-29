@@ -93,23 +93,49 @@ window.digikanban.kanban.saveCardOrder = function() {
  */
 window.digikanban.kanban.addColumn = function() {
 	const kanbanBoard = document.getElementById('kanban-board');
-	const newColumn = document.createElement('div');
-	newColumn.classList.add('kanban-column');
 
-	newColumn.innerHTML = `
-        <div class="kanban-column-header">
-            <span class="column-name" onclick="window.digikanban.kanban.editColumn(this)">Nouvelle colonne</span>
-        </div>
-        <div class="kanban-column-body">
-        </div>
-        <div class="add-item">
-            <button onclick="window.digikanban.kanban.showSelect(this)">+ Ajouter un objet</button>
-        </div>
-    `;
+	// Nom par défaut pour la colonne
+	const defaultColumnName = "Nouvelle colonne";
+	let url = $('#ajax_actions_url').val();
+	let token = window.saturne.toolbox.getToken();
+	let objectType = $('#object_type').val();
+	let mainCategoryId = $('#main_category_id').val();
 
-	const addColumnElement = document.querySelector('.kanban-add-column');
-	kanbanBoard.insertBefore(newColumn, addColumnElement);
-}
+	// Appel AJAX pour créer la colonne côté serveur
+	$.ajax({
+		url: url + "?action=add_column&token=" + token + '&object_type=' + objectType + '&category_id=' + mainCategoryId,
+		type: "POST",
+		data: JSON.stringify({ column_name: defaultColumnName }),
+		contentType: "application/json",
+		success: function(response) {
+			// Récupère le category_id depuis la réponse
+			let categoryId = response;
+
+			// Crée dynamiquement une nouvelle colonne avec les informations reçues
+			const newColumn = document.createElement('div');
+			newColumn.classList.add('kanban-column');
+			newColumn.setAttribute('category-id', categoryId); // Assigner le nouvel ID de colonne
+
+			newColumn.innerHTML = `
+                <div class="kanban-column-header">
+                    <span class="column-name" onclick="window.digikanban.kanban.editColumn(this)">${defaultColumnName}</span>
+                </div>
+                <div class="kanban-column-body"></div>
+                <div class="add-item">
+                    <button onclick="window.digikanban.kanban.showSelect(this)">+ Ajouter un objet</button>
+                </div>
+            `;
+
+			// Insère la nouvelle colonne avant le bouton "Ajouter une colonne"
+			const addColumnElement = document.querySelector('.kanban-add-column');
+			kanbanBoard.insertBefore(newColumn, addColumnElement);
+		},
+		error: function() {
+			console.log("Error adding column to the server.");
+		}
+	});
+};
+
 
 /**
  * Edit the column name when clicking on the column name or pencil icon
