@@ -25,8 +25,7 @@
 			print '<input type="hidden" id="token" value="' .  newToken() . '">';
 			print '<input type="hidden" id="object_type" value="' . $objectLinkedType . '">';
 			print '<input type="hidden" id="selector_name" value="' . $selectorName . '">';
-			print '<span class="column-name" ondblclick="window.digikanban.kanban.editColumn(this)">' . htmlspecialchars($column['label']) . '</span>';
-			print '<i class="fas fa-pencil-alt edit-icon" onclick="window.digikanban.kanban.editColumn(this.previousElementSibling)"></i>';
+			print '<span class="column-name" onclick="window.digikanban.kanban.editColumn(this)">' . htmlspecialchars($column['label']) . '</span>';
 			print '</div>';
 
 			// Corps de la colonne où les objets sont listés
@@ -56,7 +55,5 @@
 		<div class="add-column-text">+ Ajouter une colonne</div>
 	</div>
 </div>
-
-<script src="kanban.js"></script>
 </body>
 </html>

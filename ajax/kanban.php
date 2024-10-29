@@ -39,10 +39,11 @@ $linkedCategories = $categorie->get_filles();
 $action = GETPOST('action');
 $categorie = new Categorie($db);
 
-if ($action == 'renameColumn') {
+if ($action == 'rename_column') {
 	$categorie->fetch($category_id);
 	$categorie->label = $category_name;
-	$categorie->update($user);
+
+	$test = $categorie->update($user);
 }
 
 if ($action == 'add_object_to_column') {

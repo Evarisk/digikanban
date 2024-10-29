@@ -98,8 +98,7 @@ window.digikanban.kanban.addColumn = function() {
 
 	newColumn.innerHTML = `
         <div class="kanban-column-header">
-            <span class="column-name" ondblclick="window.digikanban.kanban.editColumn(this)">Nouvelle colonne</span>
-            <i class="fas fa-pencil-alt edit-icon" onclick="window.digikanban.kanban.editColumn(this.previousElementSibling)"></i>
+            <span class="column-name" onclick="window.digikanban.kanban.editColumn(this)">Nouvelle colonne</span>
         </div>
         <div class="kanban-column-body">
         </div>
@@ -122,17 +121,41 @@ window.digikanban.kanban.editColumn = function(nameElement) {
 	input.value = currentName;
 	input.classList.add('column-name-input');
 
-	input.addEventListener('keypress', function(event) {
-		if (event.key === 'Enter') {
-			nameElement.innerText = input.value;
-			nameElement.style.display = 'inline';
-			input.remove();
-		}
+	input.addEventListener('blur', function() {
+		saveColumnName(input, nameElement);
 	});
 
+	// Affiche l'input et cache le nom actuel
 	nameElement.style.display = 'none';
 	nameElement.parentNode.insertBefore(input, nameElement);
 	input.focus();
+}
+
+
+/**
+ * Save the column name and revert back to display mode
+ */
+function saveColumnName(input, nameElement) {
+	let url = $('#ajax_actions_url').val();
+
+	let token = window.saturne.toolbox.getToken();
+	let object_type = $('#object_type').val();
+	let category_id = nameElement.closest('.kanban-column').getAttribute('category-id');
+
+	$.ajax({
+		url: url + "?action=rename_column&token=" + token + '&category_name=' + input.value + '&object_type=' + object_type + '&category_id=' + category_id,
+		type: "POST",
+		contentType: "application/json",
+		success: function(response) {
+			nameElement.innerText = input.value;
+			nameElement.style.display = 'inline';
+			input.remove();
+			},
+		error: function() {
+			console.log("Error saving card order.");
+		}
+	})
+
 }
 
 /**

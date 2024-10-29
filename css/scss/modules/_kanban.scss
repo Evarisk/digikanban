@@ -40,6 +40,7 @@ body {
 .kanban-column-header:hover .column-name,
 .kanban-column-header:hover .edit-icon {
   color: #f1c40f;
+  cursor: pointer;
 }
 
 .kanban-column-header:hover {
