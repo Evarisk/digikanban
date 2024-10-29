@@ -91,7 +91,7 @@ if ($action == 'add_object_to_column') {
 
 	$result = $categorie->add_type($object, $categorie->type);
 	if ($result < 0) {
-		echo 'coucou';
+		echo 'Error';
 	} else {
 		echo $object->getKanbanView();
 	}

@@ -119,9 +119,6 @@ window.digikanban.kanban.addColumn = function() {
 			// Récupère le category_id depuis la réponse
 			let decodedResponse = JSON.parse(response);
 			let categoryId = decodedResponse.category_id;
-			console.log('coucou')
-			console.log(JSON.parse(response))
-			console.log(decodedResponse.object_selector)
 			let objectSelector = (decodedResponse.object_selector);
 
 			// Crée dynamiquement une nouvelle colonne avec les informations reçues
@@ -271,9 +268,19 @@ window.digikanban.kanban.refreshSelector = function() {
 			},
 			error: function() {
 				console.log("Failed to refresh the selectors.");
-				reject(); 
+				reject();
 			}
 		});
 	});
 };
 
+window.digikanban.kanban.toggleFullscreen = function() {
+	const kanbanBoard = document.getElementById('kanban-board');
+	if (!document.fullscreenElement) {
+		kanbanBoard.requestFullscreen().catch(err => {
+			console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+		});
+	} else {
+		document.exitFullscreen();
+	}
+};
