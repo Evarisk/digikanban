@@ -38,8 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // load digikanban libraries
-require_once __DIR__ . '/../class/kanban.class.php';
-require_once __DIR__ . '/../lib/digikanban_kanban.lib.php';
+require_once __DIR__ . '/../../class/kanban.class.php';
+require_once __DIR__ . '/../../lib/digikanban_kanban.lib.php';
 
 if (isModEnabled('digiquali')) {
 	require_once DOL_DOCUMENT_ROOT . '/custom/digiquali/lib/digiquali_control.lib.php';
@@ -109,35 +109,6 @@ $linkableElements = get_kanban_linkable_objects();
 
 $nbLinkableElements = 0;
 $objectPosition     = 150;
-
-foreach($linkableElements as $linkableElementType => $linkableElement) {
-	$className  = $linkableElement['className'];
-
-	if ((empty($fromtype) && $linkableElement['conf'] > 0) || ($fromtype == $linkableElement['link_name'])) {
-		$arrayfields['t.' . $linkableElement['post_name']] = [
-			'type'     => 'integer:' . $className . ':' . $linkableElement['class_path'],
-			'label'    => $langs->trans($linkableElement['langs']) . ' ' . $langs->trans('controlled'),
-			'enabled'  => '1',
-			'position' => $objectPosition,
-			'notnull'  => 0,
-			'visible'  => 5,
-			'checked'  => $source == 'pwa' ? 0 : 1
-		];
-
-		$objectLinkedField                                            = $arrayfields['t.' . $linkableElement['post_name']];
-		$object->fields[$linkableElement['post_name']]                = $objectLinkedField;
-		$elementElementFields[$linkableElement['post_name']]          = $linkableElement['link_name'];
-		$linkNameElementCorrespondence[$linkableElement['link_name']] = $linkableElement;
-		$objectPosition++;
-		$nbLinkableElements++;
-
-		if (!empty($fromtype)) {
-			$objectLinked = new $className($db);
-
-			$objectLinked->fetch($fromid);
-		}
-	}
-}
 
 
 // Initialize array of search criterias
@@ -326,19 +297,19 @@ if (empty($reshook)) {
 					}
 				}
 				if (!empty($kanbanInArray)) {
-					setEventMessages($langs->trans('WarningKanbanLink', count($kanbanInArray)) . ' ', $kanbanInArray, 'warnings');
+					setEventMessages($langs->trans('WarningKanbanLink', count($kanbanInArray)) . ' kanban_list.php', $kanbanInArray, 'warnings');
 				}
 				if ($totalKanbans > 0) {
-					setEventMessages($langs->trans('AddKanbanLink', $totalKanbans) . ' ' . $sheet->getNomUrl(1), []);
+					setEventMessages($langs->trans('AddKanbanLink', $totalKanbans) . ' kanban_list.php' . $sheet->getNomUrl(1), []);
 				}
 			} else {
-				setEventMessages($langs->transnoentities('ObjectNotFound', img_picto('', $sheet->picto, 'class="paddingrightonly"') . $langs->transnoentities(ucfirst($sheet->element))), [], 'errors');
+				setEventMessages($langs->transnoentities('ObjectNotFound', kanban_list . phpimg_picto('', $sheet->picto, 'class="paddingrightonly"')), [], 'errors');
 			}
 		}
 	}
 
 	// Mass actions archive
-	require_once __DIR__ . '/../../saturne/core/tpl/actions/list_massactions.tpl.php';
+	require_once __DIR__ . '/../../../saturne/core/tpl/actions/list_massactions.tpl.php';
 }
 
 /*
@@ -353,9 +324,7 @@ $title    = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Kanbans"));
 // --------------------------------------------------------------------
 $sql = 'SELECT DISTINCT ';
 foreach ($object->fields as $key => $val) {
-	if ($val != $objectLinkedField) {
-		$sql .= 't.'.$key.', ';
-	}
+	$sql .= 't.'.$key.', ';
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -374,16 +343,6 @@ if (!empty($conf->categorie->enabled)) {
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $object->table_element . "_extrafields as ef on (t.rowid = ef.fk_object)";
-}
-foreach($elementElementFields as $genericName => $elementElementName) {
-	if (GETPOST('search_'.$genericName) > 0 || $fromtype == $elementElementName) {
-		$id_to_search = GETPOST('search_'.$genericName) ?: $fromid;
-		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'element_element as '. $elementElementName .' on ('. $elementElementName .'.fk_source = ' . $id_to_search . ' AND '. $elementElementName .'.sourcetype="'. $elementElementName .'" AND '. $elementElementName .'.targettype = "digikanban_kanban")';
-	}
-}
-
-if (array_key_exists($sortfield,$elementElementFields) && !preg_match('/' . 'LEFT JOIN ' . MAIN_DB_PREFIX . 'element_element as '. $elementElementFields[$sortfield] .'/', $sql)) {
-	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'element_element as '. $elementElementFields[$sortfield] .' on ( '. $elementElementFields[$sortfield] .'.sourcetype="'. $elementElementFields[$sortfield] .'" AND '. $elementElementFields[$sortfield] .'.targettype = "digikanban_kanban" AND '. $elementElementFields[$sortfield] .'.fk_target = t.rowid)';
 }
 
 // Add table from hooks
@@ -551,7 +510,7 @@ if ($massaction == 'pre_add_kanbans') {
 		];
 		print $form->formconfirm($_SERVER['PHP_SELF'], $langs->trans('ConfirmMassAddKanban'), $langs->trans('ConfirmMassAddingKanban', count($toselect)), 'add_kanbans', $formKanban, '', 0, 200, 500, 1);
 	} else {
-		setEventMessages('<a href="' . dol_buildpath('custom/digikanban/view/sheet/sheet_list.php', 1) . '">' . $langs->transnoentities('ObjectNotFound', img_picto('', $sheet->picto, 'class="paddingrightonly"') . $langs->transnoentities(ucfirst($sheet->element))) . '</a>', [], 'warnings');
+		setEventMessages('<a href="' . dol_buildpath('custom/digikanban/view/sheet/sheet_list.php', 1) . '">' . $langs->transnoentities('ObjectNotFound', kanban_list . phpimg_picto('', $sheet->picto, 'class="paddingrightonly"')) . '</a>', [], 'warnings');
 	}
 }
 
@@ -708,7 +667,16 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			} else if ($key == 'type') {
 				print $object->showOutputField($val, $key, $langs->trans($object->$key), '');
 			} else {
-				print $object->showOutputField($val, $key, $object->$key, '');
+				if ($key == 'object_type') {
+					//find one in linkableElements where post_name == object_type
+					foreach ($linkableElements as $linkableElement) {
+						if ($linkableElement['post_name'] == $object->object_type) {
+							print img_picto($linkableElement['langs'], $linkableElement['picto']) . ' ' . $langs->trans($linkableElement['langs']);
+						}
+					}
+				} else {
+					print $object->showOutputField($val, $key, $object->$key, '');
+				}
 			}
 			print '</td>';
 			if (!$i) {

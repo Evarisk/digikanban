@@ -39,8 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 
-require_once __DIR__ . '/../class/kanban.class.php';
-require_once __DIR__ . '/../lib/digikanban_kanban.lib.php';
+require_once __DIR__ . '/../../class/kanban.class.php';
+require_once __DIR__ . '/../../lib/digikanban_kanban.lib.php';
 
 
 // Global variables definitions
@@ -112,7 +112,7 @@ if (empty($reshook)) {
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-			else $backtopage = dol_buildpath('/digikanban/view/kanban_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			else $backtopage = dol_buildpath('/digikanban/view/kanban/kanban_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 		}
 	}
 
@@ -192,7 +192,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile))) || (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {
 		// Define confirmation messages
 		$formkanbanclone = [
-			['type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans('NewLabelForClone', $langs->transnoentities('The' . ucfirst($object->element))), 'value' => $langs->trans('CopyOf') . ' ' . $object->ref, 'size' => 24],
+			['type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans('NewLabelForClone', $langs->transnoentities('The' . ucfirst($object->element))), 'value' => $langs->trans('CopyOf') . ' kanban_card.php' . $object->ref, 'size' => 24],
 			['type' => 'checkbox', 'name' => 'clone_photos', 'label' => $langs->trans('ClonePhotos'), 'value' => 1],
 			['type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans('CloneCategories'), 'value' => 1],
 		];
@@ -201,7 +201,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id, $langs->trans('Delete') . ' ' . $langs->transnoentities('The'  . ucfirst($object->element)), $langs->trans('ConfirmDeleteObject', $langs->transnoentities('The' . ucfirst($object->element))), 'confirm_delete', '', 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id, $langs->trans('Delete') . ' kanban_card.php' . $langs->transnoentities('The'  . ucfirst($object->element)), $langs->trans('ConfirmDeleteObject', $langs->transnoentities('The' . ucfirst($object->element))), 'confirm_delete', '', 'yes', 1);
 	}
 
 	// Call Hook formConfirm
@@ -273,7 +273,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<input hidden class="main-category-id" id="main_category_id" value="' . $categorie->id . '">';
 //	print '<input hidden id="object_selector"'
 
-	include_once __DIR__ . '/../core/tpl/kanban_view.tpl.php';
+	include_once __DIR__ . '/../../core/tpl/kanban_view.tpl.php';
 
 	print dol_get_fiche_end();
 
