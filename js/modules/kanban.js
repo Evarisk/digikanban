@@ -100,16 +100,29 @@ window.digikanban.kanban.addColumn = function() {
 	let token = window.saturne.toolbox.getToken();
 	let objectType = $('#object_type').val();
 	let mainCategoryId = $('#main_category_id').val();
+	let postName = $('#post_name').val();
+	let objectLinkedLangs = $('#object_linked_langs').val();
+	let objectArray = $('#object_array').val();
 
 	// Appel AJAX pour créer la colonne côté serveur
 	$.ajax({
 		url: url + "?action=add_column&token=" + token + '&object_type=' + objectType + '&category_id=' + mainCategoryId,
 		type: "POST",
-		data: JSON.stringify({ column_name: defaultColumnName }),
+		data: JSON.stringify({
+			column_name: defaultColumnName,
+			post_name: postName,
+			object_linked_langs: objectLinkedLangs,
+			object_array: objectArray
+		}),
 		contentType: "application/json",
 		success: function(response) {
 			// Récupère le category_id depuis la réponse
-			let categoryId = response;
+			let decodedResponse = JSON.parse(response);
+			let categoryId = decodedResponse.category_id;
+			console.log('coucou')
+			console.log(JSON.parse(response))
+			console.log(decodedResponse.object_selector)
+			let objectSelector = (decodedResponse.object_selector);
 
 			// Crée dynamiquement une nouvelle colonne avec les informations reçues
 			const newColumn = document.createElement('div');
@@ -122,13 +135,24 @@ window.digikanban.kanban.addColumn = function() {
                 </div>
                 <div class="kanban-column-body"></div>
                 <div class="add-item">
-                    <button onclick="window.digikanban.kanban.showSelect(this)">+ Ajouter un objet</button>
+                    <form method="POST" action="add_object_to_kanban.php">
+                        ${objectSelector} <!-- Insérer le sélecteur d'objet ici -->
+                        <button type="button" disabled class="butAction butActionRefused validate-button">Valider</button>
+                    </form>
                 </div>
             `;
-
 			// Insère la nouvelle colonne avant le bouton "Ajouter une colonne"
 			const addColumnElement = document.querySelector('.kanban-add-column');
 			kanbanBoard.insertBefore(newColumn, addColumnElement);
+
+			const selectElement = newColumn.querySelector('select');
+			if (selectElement) {
+				$(selectElement).select2({
+					width: 'resolve', // Peut être ajusté selon le besoin
+					minimumInputLength: 0
+				});
+			}
+
 		},
 		error: function() {
 			console.log("Error adding column to the server.");
@@ -203,6 +227,7 @@ window.digikanban.kanban.addObjectToColumn = function() {
 
 	window.saturne.loader.display($(this).parent().find('.kanban-select-option'));
 	url += '?action=add_object_to_column&object_id=' + objectId + '&category_id=' + categoryId + '&token=' + token + '&object_type=' + objectType;
+
 	$.ajax({
 		url: url,
 		type: 'POST',
@@ -211,35 +236,44 @@ window.digikanban.kanban.addObjectToColumn = function() {
 		success: function(resp) {
 			let kanbanColumn = $('.kanban-column[category-id="' + categoryId + '"]');
 			kanbanColumn.find('.kanban-column-body').append(resp);
-			window.digikanban.kanban.refreshSelector()
 
-			$('.wpeo-loader').removeClass('wpeo-loader');
-		},
-		error: function() {
-			console.log("Failed to add object to column.");
-		}
-	});
-
-}
-
-window.digikanban.kanban.refreshSelector = function() {
-	let token = window.saturne.toolbox.getToken();
-	let querySeparator = window.saturne.toolbox.getQuerySeparator(document.URL);
-	let form = $('.kanban-board').find('form');
-	$.ajax({
-		url: document.URL + querySeparator + 'token=' + token,
-		type: 'POST',
-		processData: false,
-		contentType: false,
-		success: function(resp) {
-			form.each(function() {
-				let selectorId = $(this).find('select').attr('id')
-				$(this).replaceWith($(resp).find('#' + selectorId).closest('form')); // Remplacer uniquement si le nouveau sélecteur existe
+			window.digikanban.kanban.refreshSelector().then(() => {
+				$('.wpeo-loader').removeClass('wpeo-loader');
+			}).catch(() => {
+				console.log("Error refreshing selectors.");
+				$('.wpeo-loader').removeClass('wpeo-loader');
 			});
 		},
 		error: function() {
-			console.log("Failed to refresh the selectors.");
+			console.log("Failed to add object to column.");
+			$('.wpeo-loader').removeClass('wpeo-loader');
 		}
+	});
+};
+
+window.digikanban.kanban.refreshSelector = function() {
+	return new Promise((resolve, reject) => {
+		let token = window.saturne.toolbox.getToken();
+		let querySeparator = window.saturne.toolbox.getQuerySeparator(document.URL);
+		let form = $('.kanban-board').find('form');
+
+		$.ajax({
+			url: document.URL + querySeparator + 'token=' + token,
+			type: 'POST',
+			processData: false,
+			contentType: false,
+			success: function(resp) {
+				form.each(function() {
+					let selectorId = $(this).find('select').attr('id');
+					$(this).replaceWith($(resp).find('#' + selectorId).closest('form')); // Remplacer uniquement si le nouveau sélecteur existe
+				});
+				resolve();
+			},
+			error: function() {
+				console.log("Failed to refresh the selectors.");
+				reject(); 
+			}
+		});
 	});
 };
 

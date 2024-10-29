@@ -15,6 +15,11 @@
 	// Itération sur les catégories (colonnes du Kanban)
 	if (is_array($columns) && !empty($columns)) {
 		$ajaxActionsUrl = dol_buildpath('/custom/digikanban/ajax/kanban.php', 1);
+		print '<input type="hidden" id="post_name" value="' . $objectLinkedMetadata['post_name'] . '">';
+		print '<input type="hidden" id="object_linked_langs" value="' . $objectLinkedMetadata['langs'] . '">';
+		print '<input hidden id="object_array" value="' . htmlspecialchars(json_encode($objectArray)) . '">';
+		// object_array
+
 
 		foreach ($columns as $column) {
 			$objectSelector = $form->selectArray($objectLinkedMetadata['post_name'] . $column['category_id'], $objectArray, GETPOST($objectLinkedMetadata['post_name']), $langs->trans('Select') . ' ' . strtolower($langs->trans($objectLinkedMetadata['langs'])), 0, 0, '', 0, 0, dol_strlen(GETPOST('fromtype')) > 0 && GETPOST('fromtype') != $objectLinkedMetadata['link_name'], '', 'maxwidth200 widthcentpercentminusxx kanban-select-option');
@@ -25,6 +30,7 @@
 			print '<input type="hidden" id="token" value="' .  newToken() . '">';
 			print '<input type="hidden" id="object_type" value="' . $objectLinkedType . '">';
 			print '<input type="hidden" id="selector_name" value="' . $selectorName . '">';
+
 			print '<span class="column-name" onclick="window.digikanban.kanban.editColumn(this)">' . htmlspecialchars($column['label']) . '</span>';
 			print '</div>';
 

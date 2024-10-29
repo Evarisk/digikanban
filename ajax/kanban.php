@@ -9,14 +9,13 @@ if (file_exists('../digikanban.main.inc.php')) {
 	die('Include of digikanban main fails');
 }
 
-global $db, $user;
+global $db, $user, $langs;
 
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 require_once __DIR__ . '/../lib/digikanban_kanban.lib.php';
 
 $categorie = new Categorie($db);
-
-
+$form = new Form($db);
 
 $elementArray = get_kanban_linkable_objects();
 
@@ -50,7 +49,9 @@ if ($action == 'add_column') {
 	$data = json_decode(file_get_contents("php://input"), true);
 
 	$category_name = $data['column_name'];
-	$object_type = GETPOST('object_type', 'alpha');
+	$postName = $data['post_name'];
+	$objectLinkedLangs = $data['object_linked_langs'];
+	$objectArray = json_decode($data['object_array'], true);
 
 	$categorie->fetch($category_id);
 	$sameCategories = $categorie->get_filles();
@@ -75,7 +76,12 @@ if ($action == 'add_column') {
 	$result = $categorie->create($user);
 
 	if ($result > 0) {
-		echo $result;
+		$objectSelector = $form->selectArray($postName . $result, $objectArray, GETPOST($postName), $langs->trans('Select') . ' ' . strtolower($langs->trans($objectLinkedLangs)), 0, 0, '', 0, 0, dol_strlen(GETPOST('fromtype')) > 0 && GETPOST('fromtype') != $objectLinkedMetadata['link_name'], '', 'maxwidth200 widthcentpercentminusxx kanban-select-option');
+
+		echo json_encode([
+			'category_id' => $result,
+			'object_selector' => $objectSelector
+		]);
 	}
 }
 
