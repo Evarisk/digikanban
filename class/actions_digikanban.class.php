@@ -71,51 +71,12 @@ class Actionsdigikanban
 
 	}
 
-	public function completeTabsHead($parameters, &$object, &$action, $hookmanager){
-		global $langs, $db;
-		dol_include_once('/digikanban/class/digikanban_commnts.class.php');
-		$currentpage = explode(':', $parameters['context']);
-		if(in_array('projecttaskcard', $currentpage)) {
-
-			$comment = new digikanban_commnts($db);
-			if(isset($parameters['object']) && empty($object->id))
-				$object = $parameters['object'];
-			$nbComment = $comment->fetchAll(' AND fk_task ='.$object->id);
-
-			$withproject = GETPOST('withproject', 'int');
-			// --------------------------------------------------------------------------------------------------------------
-			?>
-			<script type="text/javascript">
-				$(document).ready(function() {
-			    if ($('#tab_commentaire').length){
-			    	var title = '<?php echo $langs->trans("Comments") ?>';
-			        $('#tab_commentaire').html(title+' <span class="badge marginleftonlyshort"><?php echo dol_escape_js($nbComment); ?></span>').addClass('loaded');
-
-			        <?php if($withproject) { ?>
-			        	var tmpurl = window.location.protocol + "//" + window.location.host;
-				        tabcomm = $('#tab_commentaire').attr('href');
-						var url = new URL(tmpurl+tabcomm);
-						url.searchParams.set("withproject", 1);
-						var newUrl = url.href;
-						newUrl = newUrl.replace(tmpurl, "");
-						$('#tab_commentaire').attr('href', newUrl);
-			        <?php } ?>
-
-			    }
-			   });
-			</script>
-		    <?php
-		}
-	    return 0;
-
-	}
-
 	public function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf, $langs, $db, $user, $sldprogress;
 
 		$currentpage = explode(':', $parameters['context']);
-		
+
 		if((in_array('projecttaskcard', $currentpage) || in_array('projecttaskscard', $currentpage)) && empty($conf->ganttproadvanced->enabled)) {
 
 			$sldprogress = 0;
@@ -145,5 +106,66 @@ class Actionsdigikanban
 
 		}
 	}
+
+	/**
+	 * Overloading the constructCategory function : replacing the parent's function with the one below
+	 *
+	 * @param   array           $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @return  int                             0 < on error, 0 on success, 1 to replace standard code
+	 */
+	public function constructCategory($parameters, &$object)
+	{
+		$error = 0; // Error counter
+
+		if (strpos($parameters['context'], 'category') !== false) {
+			$tags = [
+				'productbatch' => [
+					'id'        => 436301421,
+					'code'      => 'productbatch',
+					'obj_class' => 'Productlot',
+					'obj_table' => 'product_lot',
+					'cat_fk'    => 'productbatch',
+				],
+				'project_task' => [
+					'id'        => 436301422,
+					'code'      => 'project_task',
+					'obj_class' => 'SaturneTask',
+					'obj_table' => 'projet_task',
+					'cat_fk'    => 'project_task',
+				],
+				'invoice' => [
+					'id'        => 436301423,
+					'code'      => 'invoice',
+					'obj_class' => 'Facture',
+					'obj_table' => 'facture',
+					'cat_fk'    => 'invoice',
+				],
+				'propal' => [
+					'id'        => 436301424,
+					'code'      => 'propal',
+					'obj_class' => 'Propal',
+					'obj_table' => 'propal',
+					'cat_fk'    => 'propal',
+				],
+				'contract' => [
+					'id'        => 436301425,
+					'code'      => 'contrat',
+					'obj_class' => 'Contrat',
+					'obj_table' => 'contrat',
+					'cat_fk'    => 'contrat',
+				],
+			];
+		}
+
+		if (!$error) {
+			$this->results = $tags;
+			return 0; // or return 1 to replace standard code
+		} else {
+			$this->errors[] = 'Error message';
+			return -1;
+		}
+	}
+
 
 }
