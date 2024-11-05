@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 require_once __DIR__ . '/../../class/kanban.class.php';
 require_once __DIR__ . '/../../lib/digikanban_kanban.lib.php';
@@ -147,12 +148,12 @@ if ($action == 'create') {
 
 	$linkableObjectsList = [];
 	foreach($elementArray as $linkableElementType => $linkableElement) {
-		$linkableObjectsList[$linkableElement['post_name']] = img_picto('', $linkableElement['picto']) . ' ' . $langs->trans($linkableElement['langs']);
+		$linkableObjectsList[$linkableElement['category_name']] = img_picto('', $linkableElement['picto']) . ' ' . $langs->trans($linkableElement['langs']);
 	}
 
 	//show dolibarr selector with $linkableObjectsList
 	print '<tr><td class="fieldrequired minwidth400">'.$langs->trans('ObjectType').'</td><td>';
-	print $form->selectarray('object_type', $linkableObjectsList, GETPOST('object_type', 'alpha'), 1, 0, 0, '', '', false);
+	print $form->selectarray('object_type', $linkableObjectsList, GETPOST('category_name', 'alpha'), 1, 0, 0, '', '', false);
 	print '</td></tr>';
 
 	// Other attributes
@@ -221,7 +222,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkedCategories = $categorie->get_filles();
 	if (!empty($elementArray)) {
 		foreach ($elementArray as $linkableElementType => $linkableElement) {
-			if ($object->object_type == $linkableElement['post_name']) {
+			if ($object->object_type == $linkableElement['category_name']) {
 				$objectLinkedMetadata = $linkableElement;
 				$objectLinkedType = $linkableElementType;
 			}
@@ -231,10 +232,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$objectFilter = [];
 	$columns = [];
 	if (is_array($linkedCategories) && !empty($linkedCategories)) {
-		foreach($linkedCategories as $linkedCategory) {
-			$objectsInCategory = $linkedCategory->getObjectsInCateg($objectLinkedMetadata['tab_type']);
+		foreach ($linkedCategories as $linkedCategory) {
+			$objectsInCategory = $linkedCategory->getObjectsInCateg($objectLinkedMetadata['category_name']);
 			if (is_array($objectsInCategory) && !empty($objectsInCategory)) {
-				foreach($objectsInCategory as $objectInCategory) {
+				foreach ($objectsInCategory as $objectInCategory) {
 					$objectFilter[] = $objectInCategory->id;
 				}
 			}
@@ -245,6 +246,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			];
 		}
 	}
+
 	require_once DOL_DOCUMENT_ROOT . '/' . $objectLinkedMetadata['class_path'];
 
 	$objectList = saturne_fetch_all_object_type($objectLinkedMetadata['className']);

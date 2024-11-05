@@ -41,8 +41,12 @@
 			$objectsInColumn = $column['objects'];
 
 			if (is_array($objectsInColumn) && !empty($objectsInColumn)) {
-				foreach($objectsInColumn as $object) {
-					print $object->getKanbanView();
+				foreach($objectsInColumn as $objectInColumn) {
+					if (method_exists($objectInColumn, 'getKanbanView')) {
+						print $objectInColumn->getKanbanView();
+					} else {
+						print $object->getObjectKanbanView($objectInColumn);
+					}
 				}
 			}
 			print '</div>';

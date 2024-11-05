@@ -70,6 +70,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Product',
 			'post_name'      => 'fk_product',
 			'link_name'      => 'product',
+			'category_name'  => 'product',
 			'tab_type'       => 'product',
 			'hook_name_list' => 'productservicelist',
 			'hook_name_card' => 'productcard',
@@ -87,6 +88,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'ProductLot',
 			'post_name'      => 'fk_productlot',
 			'link_name'      => 'productbatch',
+			'category_name'  => 'productbatch',
 			'tab_type'       => 'productlot',
 			'hook_name_list' => 'product_lotlist',
 			'hook_name_card' => 'productlotcard',
@@ -105,6 +107,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'User',
 			'post_name'      => 'fk_user',
 			'link_name'      => 'user',
+			'category_name'  => 'user',
 			'tab_type'       => 'user',
 			'hook_name_list' => 'userlist',
 			'hook_name_card' => 'usercard',
@@ -116,12 +119,28 @@ function get_kanban_linkable_objects(): array
 
 	if (isModEnabled('societe')) {
 		$linkableObjectTypes['thirdparty'] = [
-			'langs'          => 'ThirdParty',
+			'langs'          => 'Customer',
 			'langfile'       => 'companies',
 			'picto'          => 'building',
 			'className'      => 'Societe',
 			'post_name'      => 'fk_soc',
 			'link_name'      => 'societe',
+			'category_name'  => 'customer',
+			'tab_type'       => 'thirdparty',
+			'hook_name_list' => 'thirdpartylist',
+			'hook_name_card' => 'thirdpartycard',
+			'name_field'     => 'nom',
+			'create_url'     => 'societe/card.php',
+			'class_path'     => 'societe/class/societe.class.php',
+		];
+		$linkableObjectTypes['supplier'] = [
+			'langs'          => 'Supplier',
+			'langfile'       => 'companies',
+			'picto'          => 'building',
+			'className'      => 'Fournisseur',
+			'post_name'      => 'fk_soc',
+			'link_name'      => 'supplier',
+			'category_name'  => 'supplier',
 			'tab_type'       => 'thirdparty',
 			'hook_name_list' => 'thirdpartylist',
 			'hook_name_card' => 'thirdpartycard',
@@ -136,6 +155,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Contact',
 			'post_name'      => 'fk_contact',
 			'link_name'      => 'contact',
+			'category_name'  => 'contact',
 			'tab_type'       => 'contact',
 			'hook_name_list' => 'contactlist',
 			'hook_name_card' => 'contactcard',
@@ -155,6 +175,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Project',
 			'post_name'      => 'fk_project',
 			'link_name'      => 'project',
+			'category_name'  => 'project',
 			'tab_type'       => 'project',
 			'hook_name_list' => 'projectlist',
 			'hook_name_card' => 'projectcard',
@@ -169,6 +190,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'SaturneTask',
 			'post_name'      => 'fk_task',
 			'link_name'      => 'project_task',
+			'category_name'  => 'project_task',
 			'tab_type'       => 'task',
 			'hook_name_list' => 'tasklist',
 			'hook_name_card' => 'projecttaskcard',
@@ -188,6 +210,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Facture',
 			'post_name'      => 'fk_invoice',
 			'link_name'      => 'facture',
+			'category_name'  => 'invoice',
 			'tab_type'       => 'invoice',
 			'hook_name_list' => 'invoicelist',
 			'hook_name_card' => 'invoicecard',
@@ -205,6 +228,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Commande',
 			'post_name'      => 'fk_order',
 			'link_name'      => 'commande',
+			'category_name'  => 'order',
 			'tab_type'       => 'order',
 			'hook_name_list' => 'orderlist',
 			'hook_name_card' => 'ordercard',
@@ -222,6 +246,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Contrat',
 			'post_name'      => 'fk_contract',
 			'link_name'      => 'contrat',
+			'category_name'  => 'contrat',
 			'tab_type'       => 'contract',
 			'hook_name_list' => 'contractlist',
 			'hook_name_card' => 'contractcard',
@@ -238,6 +263,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Ticket',
 			'post_name'      => 'fk_ticket',
 			'link_name'      => 'ticket',
+			'category_name'  => 'ticket',
 			'tab_type'       => 'ticket',
 			'hook_name_list' => 'ticketlist',
 			'hook_name_card' => 'ticketcard',
@@ -255,6 +281,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Entrepot',
 			'post_name'      => 'fk_entrepot',
 			'link_name'      => 'stock',
+			'category_name'  => 'warehouse',
 			'tab_type'       => 'stock',
 			'hook_name_list' => 'stocklist',
 			'hook_name_card' => 'warehousecard',
@@ -263,22 +290,23 @@ function get_kanban_linkable_objects(): array
 			'class_path'     => 'product/stock/class/entrepot.class.php',
 		];
 	}
-
-	if (isModEnabled('expedition')) {
-		$linkableObjectTypes['expedition'] = [
-			'langs'          => 'Shipment',
-			'langfile'       => 'sendings',
-			'picto'          => 'dolly',
-			'className'      => 'DigiQualiExpedition',
-			'post_name'      => 'fk_expedition',
-			'link_name'      => 'expedition',
-			'tab_type'       => 'delivery',
-			'hook_name_list' => 'shipmentlist',
-			'hook_name_card' => 'ordershipmentcard',
-			'name_field'     => 'ref',
-			'class_path'     => 'custom/digiquali/class/dolibarrobjects/digiqualiexpedition.class.php',
-		];
-	}
+//
+//	if (isModEnabled('expedition')) {
+//		$linkableObjectTypes['expedition'] = [
+//			'langs'          => 'Shipment',
+//			'langfile'       => 'sendings',
+//			'picto'          => 'dolly',
+//			'className'      => 'DigiQualiExpedition',
+//			'post_name'      => 'fk_expedition',
+//			'link_name'      => 'expedition',
+//			'category_name'  => 'shipment',
+//			'tab_type'       => 'delivery',
+//			'hook_name_list' => 'shipmentlist',
+//			'hook_name_card' => 'ordershipmentcard',
+//			'name_field'     => 'ref',
+//			'class_path'     => 'custom/digiquali/class/dolibarrobjects/digiqualiexpedition.class.php',
+//		];
+//	}
 
 	if (isModEnabled('propal')) {
 		$linkableObjectTypes['propal'] = [
@@ -288,6 +316,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Propal',
 			'post_name'      => 'fk_propal',
 			'link_name'      => 'propal',
+			'category_name'  => 'propal',
 			'tab_type'       => 'propal',
 			'hook_name_list' => 'propallist',
 			'hook_name_card' => 'propalcard',
@@ -305,6 +334,7 @@ function get_kanban_linkable_objects(): array
 			'className'      => 'Control',
 			'post_name'      => 'fk_control',
 			'link_name'      => 'control',
+			'category_name'  => 'control',
 			'tab_type'       => 'control',
 			'hook_name_list' => 'controllist',
 			'hook_name_card' => 'controlcard',
@@ -388,6 +418,7 @@ function get_kanban_linkable_objects(): array
 					'name_field'     => $linkableObjectInformations['name_field'] ?? '',
 					'post_name'      => $linkableObjectInformations['post_name'] ?? '',
 					'link_name'      => $linkableObjectInformations['link_name'] ?? '',
+					'category_name'  => $linkableObjectInformations['category_name'] ?? '',
 					'tab_type'       => $linkableObjectInformations['tab_type'] ?? '',
 					'hook_name_list' => $linkableObjectInformations['hook_name_list'] ?? '',
 					'hook_name_card' => $linkableObjectInformations['hook_name_card'] ?? '',

@@ -12,8 +12,12 @@ if (file_exists('../digikanban.main.inc.php')) {
 global $db, $user, $langs;
 
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 require_once __DIR__ . '/../lib/digikanban_kanban.lib.php';
+require_once __DIR__ . '/../class/kanban.class.php';
 
+
+$kanban = new Kanban($db);
 $categorie = new Categorie($db);
 $form = new Form($db);
 
@@ -88,18 +92,25 @@ if ($action == 'add_column') {
 if ($action == 'add_object_to_column') {
 	$object->fetch($object_id);
 	$categorie->fetch($category_id);
+	$categoryType = $categorie::$MAP_ID_TO_CODE[$categorie->type];
 
-	$result = $categorie->add_type($object, $categorie->type);
+	$result = $categorie->add_type($object, $categoryType);
 	if ($result < 0) {
 		echo 'Error';
 	} else {
-		echo $object->getKanbanView();
+		if (method_exists($object, 'getKanbanView')) {
+
+			print $object->getKanbanView();
+		} else {
+			print $kanban->getObjectKanbanView($object);
+		}
 	}
 }
 
 if ($action == 'move_object') {
 	// get action payload
 	$payload = json_decode(file_get_contents('php://input'), true);
+
 	if (is_array($payload) && !empty($payload)) {
 		$order = $payload['order'];
 		if (is_array($order) && !empty($order)) {
@@ -107,19 +118,19 @@ if ($action == 'move_object') {
 				$column_id = $columnDetails['columnId'];
 				$objects = $columnDetails['cards'];
 				$categorie->fetch($column_id);
-				$objectsInColumn = $categorie->getObjectsInCateg($object_type);
+				$categoryType = $categorie::$MAP_ID_TO_CODE[$categorie->type];
+
+				$objectsInColumn = $categorie->getObjectsInCateg($categoryType);
 				if (is_array($objectsInColumn) && !empty($objectsInColumn)) {
 					foreach ($objectsInColumn as $linkedObject) {
-						$object->fetch($linkedObject->id);
-						$test = $categorie->del_type($object, $object_type);
-
+						$test = $categorie->del_type($linkedObject, $categoryType);
 					}
 
 				}
 				if (is_array($objects) && !empty($objects)) {
 					foreach ($objects as $object_id) {
 						$object->fetch($object_id);
-						$categorie->add_type($object, $object_type);
+						$categorie->add_type($object, $categoryType);
 					}
 				}
 			}

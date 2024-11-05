@@ -122,14 +122,13 @@ class InterfaceDigiKanbanTriggers extends DolibarrTriggers
 					$elementArray = get_kanban_linkable_objects();
 					if (!empty($elementArray)) {
 						foreach ($elementArray as $linkableElementType => $linkableElement) {
-							if (GETPOST('object_type') == $linkableElement['post_name']) {
-								$linkedObjectType = $linkableElement['link_name'];
+							if (GETPOST('object_type') == $linkableElement['category_name']) {
+								$linkedObjectType = $linkableElement['category_name'];
 							}
 						}
 					}
 				}
 				$category     = new Categorie($this->db);
-
 				$category->label       = $object->ref;
 				$category->description = '';
 				$category->visible     = 1;
