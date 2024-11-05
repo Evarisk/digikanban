@@ -332,7 +332,7 @@ class modDigiKanban extends DolibarrModules
 			'position' => 1000 + $r,
 			'enabled'  => 1,
 			'perms'    => '$user->rights->digikanban->adminpage->read',
-			'target'   => '',-
+			'target'   => '',
 			'user'     => 0
 		];
 
