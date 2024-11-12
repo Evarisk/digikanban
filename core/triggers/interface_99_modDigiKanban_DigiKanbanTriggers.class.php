@@ -126,11 +126,24 @@ class InterfaceDigiKanbanTriggers extends DolibarrTriggers
 						}
 					}
 				}
-				$category     = new Categorie($this->db);
+
+				$category              = new Categorie($this->db);
+				$objectLinkedMainCategory = new Categorie($this->db);
+				$objectLinkedMainCategory->fetch('', 'DigiKanban', $linkedObjectType);
+
+				if (empty($objectLinkedMainCategory->id)) {
+					$objectLinkedMainCategory->label       = 'DigiKanban';
+					$objectLinkedMainCategory->description = '';
+					$objectLinkedMainCategory->visible     = 1;
+					$objectLinkedMainCategory->type        = $linkedObjectType;
+					$objectLinkedMainCategory->create($user);
+				}
+
 				$category->label       = $object->ref;
 				$category->description = '';
 				$category->visible     = 1;
 				$category->type        = $linkedObjectType;
+				$category->fk_parent   = $objectLinkedMainCategory->id;
 				$result                = $category->create($user);
 
 				$categories = [

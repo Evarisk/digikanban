@@ -670,7 +670,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				if ($key == 'object_type') {
 					//find one in linkableElements where post_name == object_type
 					foreach ($linkableElements as $linkableElement) {
-						if ($linkableElement['post_name'] == $object->object_type) {
+						if ($linkableElement['category_name'] == $object->object_type) {
 							print img_picto($linkableElement['langs'], $linkableElement['picto']) . ' ' . $langs->trans($linkableElement['langs']);
 						}
 					}
