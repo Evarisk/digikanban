@@ -116,12 +116,10 @@ class InterfaceDigiKanbanTriggers extends DolibarrTriggers
 		switch ($action) {
 			case 'KANBAN_CREATE' :
 
-				// Load Digiquali libraries
-				$elementArray = [];
 				if ($object->context != 'createfromclone') {
 					$elementArray = get_kanban_linkable_objects();
 					if (!empty($elementArray)) {
-						foreach ($elementArray as $linkableElementType => $linkableElement) {
+						foreach ($elementArray as $linkableElement) {
 							if (GETPOST('object_type') == $linkableElement['category_name']) {
 								$linkedObjectType = $linkableElement['category_name'];
 							}
@@ -135,7 +133,6 @@ class InterfaceDigiKanbanTriggers extends DolibarrTriggers
 				$category->type        = $linkedObjectType;
 				$result                = $category->create($user);
 
-				// create to do / doing / done categories with this parent
 				$categories = [
 					['label' => $langs->transnoentities('ToDo'), 'description' => $langs->transnoentities('ToDo'), 'type' => $linkedObjectType, 'parent' => $result],
 					['label' => $langs->transnoentities('InProgress'), 'description' => $langs->transnoentities('Doing'), 'type' => $linkedObjectType, 'parent' => $result],

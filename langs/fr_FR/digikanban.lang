@@ -15,8 +15,9 @@ InReview              = À Controler
 Done                  = Fait
 
 # Menu - Menu
-KanbanList = Liste des Kanban
-NewKanban  = Nouveau Kanban
+KanbanList            = Liste des Kanban
+NewKanban             = Nouveau Kanban
+DigiKanbanDescription = DigiKanban est un outil de gestion de projet basé sur la méthode Kanban. Il permet de visualiser l'avancement des tâches et de les organiser en fonction de leur statut.
 
 # Liste des Kanban - Kanban List
 ObjectType = Type d'objet

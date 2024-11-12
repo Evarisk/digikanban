@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
+// Load module libraries
 require_once __DIR__ . '/../../class/kanban.class.php';
 require_once __DIR__ . '/../../lib/digikanban_kanban.lib.php';
 
@@ -71,7 +72,7 @@ $categorie 	    = new Categorie($db);
 $form = new Form($db);
 
 $elementArray = get_kanban_linkable_objects();
-$hookmanager->initHooks(array('kanbancard', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('kanbancard', 'globalcard'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -273,7 +274,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	print '<input hidden class="main-category-id" id="main_category_id" value="' . $categorie->id . '">';
-//	print '<input hidden id="object_selector"'
 
 	include_once __DIR__ . '/../../core/tpl/kanban_view.tpl.php';
 

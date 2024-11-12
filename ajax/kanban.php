@@ -17,20 +17,20 @@ require_once __DIR__ . '/../lib/digikanban_kanban.lib.php';
 require_once __DIR__ . '/../class/kanban.class.php';
 
 
-$kanban = new Kanban($db);
+$kanban    = new Kanban($db);
 $categorie = new Categorie($db);
-$form = new Form($db);
+$form      = new Form($db);
 
-$elementArray = get_kanban_linkable_objects();
-
-
-$category_id = GETPOST('category_id');
-$object_id = GETPOST('object_id');
-$object_type = GETPOST('object_type');
+$elementArray  = get_kanban_linkable_objects();
+$category_id   = GETPOST('category_id');
+$object_id     = GETPOST('object_id');
+$object_type   = GETPOST('object_type');
 $category_name = GETPOST('category_name');
 
 $objectLinkedClassPath = $elementArray[$object_type]['class_path'];
+
 require_once DOL_DOCUMENT_ROOT . '/' . $objectLinkedClassPath;
+
 $objectLinked = $elementArray[$object_type]['className'];
 
 $object = new $objectLinked($db);
@@ -39,7 +39,7 @@ $categorie->fetch($category_id);
 $linkedCategories = $categorie->get_filles();
 
 
-$action = GETPOST('action');
+$action    = GETPOST('action');
 $categorie = new Categorie($db);
 
 if ($action == 'rename_column') {
@@ -52,10 +52,10 @@ if ($action == 'rename_column') {
 if ($action == 'add_column') {
 	$data = json_decode(file_get_contents("php://input"), true);
 
-	$category_name = $data['column_name'];
-	$postName = $data['post_name'];
+	$category_name     = $data['column_name'];
+	$postName          = $data['post_name'];
 	$objectLinkedLangs = $data['object_linked_langs'];
-	$objectArray = json_decode($data['object_array'], true);
+	$objectArray       = json_decode($data['object_array'], true);
 
 	$categorie->fetch($category_id);
 	$sameCategories = $categorie->get_filles();
@@ -108,7 +108,6 @@ if ($action == 'add_object_to_column') {
 }
 
 if ($action == 'move_object') {
-	// get action payload
 	$payload = json_decode(file_get_contents('php://input'), true);
 
 	if (is_array($payload) && !empty($payload)) {
@@ -116,14 +115,14 @@ if ($action == 'move_object') {
 		if (is_array($order) && !empty($order)) {
 			foreach ($order as $columnDetails) {
 				$column_id = $columnDetails['columnId'];
-				$objects = $columnDetails['cards'];
+				$objects   = $columnDetails['cards'];
 				$categorie->fetch($column_id);
 				$categoryType = $categorie::$MAP_ID_TO_CODE[$categorie->type];
 
 				$objectsInColumn = $categorie->getObjectsInCateg($categoryType);
 				if (is_array($objectsInColumn) && !empty($objectsInColumn)) {
 					foreach ($objectsInColumn as $linkedObject) {
-						$test = $categorie->del_type($linkedObject, $categoryType);
+						$categorie->del_type($linkedObject, $categoryType);
 					}
 
 				}

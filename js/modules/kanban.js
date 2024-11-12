@@ -27,30 +27,23 @@ window.digikanban.kanban.event = function() {
 
 	$('.info-box').attr('draggable', 'true');
 
-	// Enable drag-and-drop for all box-flex-item elements
 	$('.kanban-column-body').sortable({
-		connectWith: '.kanban-column-body', // Allow dragging between columns
-		placeholder: 'kanban-placeholder',  // CSS class for placeholder when dragging
-		handle: '.info-box',           // Limit dragging to cards only
-		tolerance: 'pointer',               // Make dragging smoother
+		connectWith: '.kanban-column-body',
+		placeholder: 'kanban-placeholder',
+		handle: '.info-box',
+		tolerance: 'pointer',
 		over: function() {
-			// Add dragging class for visual feedback
 			$(this).css('cursor', 'grabbing');
 		},
 		stop: function(event, ui) {
-			// Trigger an AJAX call to save the new order of the cards after drop
 			window.digikanban.kanban.saveCardOrder();
 		},
-
-
 	});
 
-	// Variables for dragging
 	const kanbanBoard = document.getElementById('kanban-board');
 	let isDragging = false;
 	let startX, scrollLeft;
 
-	// Enable horizontal drag scroll
 	kanbanBoard.addEventListener('mousedown', (e) => {
 		const isClickInsideKanban = e.target.closest('.kanban-column, .kanban-column-header, .kanban-card, .kanban-select-option');
 
@@ -66,11 +59,10 @@ window.digikanban.kanban.event = function() {
 		if (!isDragging) return;
 		e.preventDefault();
 		const x = e.pageX - kanbanBoard.offsetLeft;
-		const walk = (x - startX) * 1.5; // Scroll speed multiplier
+		const walk = (x - startX) * 1.5;
 		kanbanBoard.scrollLeft = scrollLeft - walk;
 	});
 
-	// End dragging
 	kanbanBoard.addEventListener('mouseup', () => {
 		isDragging = false;
 		kanbanBoard.classList.remove('dragging');
@@ -81,6 +73,7 @@ window.digikanban.kanban.event = function() {
 		kanbanBoard.classList.remove('dragging');
 	});
 };
+
 /**
  * Save the new card order after drag-and-drop.
  *
@@ -125,22 +118,26 @@ window.digikanban.kanban.saveCardOrder = function() {
 };
 
 /**
- * Add a new column to the kanban board
+ * Add a new column to the kanban board.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @returns {void}
  */
 window.digikanban.kanban.addColumn = function() {
 	const kanbanBoard = document.getElementById('kanban-board');
 
 	// Nom par défaut pour la colonne
 	const defaultColumnName = "Nouvelle colonne";
-	let url = $('#ajax_actions_url').val();
-	let token = window.saturne.toolbox.getToken();
-	let objectType = $('#object_type').val();
-	let mainCategoryId = $('#main_category_id').val();
-	let postName = $('#post_name').val();
-	let objectLinkedLangs = $('#object_linked_langs').val();
-	let objectArray = $('#object_array').val();
+	let url                 = $('#ajax_actions_url').val();
+	let token               = window.saturne.toolbox.getToken();
+	let objectType          = $('#object_type').val();
+	let mainCategoryId      = $('#main_category_id').val();
+	let postName            = $('#post_name').val();
+	let objectLinkedLangs   = $('#object_linked_langs').val();
+	let objectArray         = $('#object_array').val();
 
-	// Appel AJAX pour créer la colonne côté serveur
 	$.ajax({
 		url: url + "?action=add_column&token=" + token + '&object_type=' + objectType + '&category_id=' + mainCategoryId,
 		type: "POST",
@@ -152,15 +149,13 @@ window.digikanban.kanban.addColumn = function() {
 		}),
 		contentType: "application/json",
 		success: function(response) {
-			// Récupère le category_id depuis la réponse
 			let decodedResponse = JSON.parse(response);
-			let categoryId = decodedResponse.category_id;
-			let objectSelector = (decodedResponse.object_selector);
+			let categoryId      = decodedResponse.category_id;
+			let objectSelector  = (decodedResponse.object_selector);
 
-			// Crée dynamiquement une nouvelle colonne avec les informations reçues
 			const newColumn = document.createElement('div');
 			newColumn.classList.add('kanban-column');
-			newColumn.setAttribute('category-id', categoryId); // Assigner le nouvel ID de colonne
+			newColumn.setAttribute('category-id', categoryId);
 
 			newColumn.innerHTML = `
                 <div class="kanban-column-header">
@@ -169,19 +164,19 @@ window.digikanban.kanban.addColumn = function() {
                 <div class="kanban-column-body"></div>
                 <div class="add-item">
                     <form method="POST" action="add_object_to_kanban.php">
-                        ${objectSelector} <!-- Insérer le sélecteur d'objet ici -->
+                        ${objectSelector}
                         <button type="button" disabled class="butAction butActionRefused validate-button">Valider</button>
                     </form>
                 </div>
             `;
-			// Insère la nouvelle colonne avant le bouton "Ajouter une colonne"
+
 			const addColumnElement = document.querySelector('.kanban-add-column');
 			kanbanBoard.insertBefore(newColumn, addColumnElement);
 
 			const selectElement = newColumn.querySelector('select');
 			if (selectElement) {
 				$(selectElement).select2({
-					width: 'resolve', // Peut être ajusté selon le besoin
+					width: 'resolve',
 					minimumInputLength: 0
 				});
 			}
@@ -193,9 +188,13 @@ window.digikanban.kanban.addColumn = function() {
 	});
 };
 
-
 /**
- * Edit the column name when clicking on the column name or pencil icon
+ * Edit the name of a column.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @returns {void}
  */
 window.digikanban.kanban.editColumn = function(nameElement) {
 	const currentName = nameElement.innerText;
@@ -208,20 +207,23 @@ window.digikanban.kanban.editColumn = function(nameElement) {
 		saveColumnName(input, nameElement);
 	});
 
-	// Affiche l'input et cache le nom actuel
 	nameElement.style.display = 'none';
 	nameElement.parentNode.insertBefore(input, nameElement);
 	input.focus();
 }
 
-
 /**
- * Save the column name and revert back to display mode
+ * Save the new column name.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @returns {void}
  */
 function saveColumnName(input, nameElement) {
 	let url = $('#ajax_actions_url').val();
 
-	let token = window.saturne.toolbox.getToken();
+	let token       = window.saturne.toolbox.getToken();
 	let object_type = $('#object_type').val();
 	let category_id = nameElement.closest('.kanban-column').getAttribute('category-id');
 
@@ -241,8 +243,14 @@ function saveColumnName(input, nameElement) {
 
 }
 
+
 /**
- * Triggers when element is selected in the select box
+ * Select an option in the dropdown menu.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @returns {void}
  */
 window.digikanban.kanban.selectOption = function() {
 	const validateButton = $(this).parent().find('.validate-button');
@@ -250,13 +258,21 @@ window.digikanban.kanban.selectOption = function() {
 	validateButton.removeAttr('disabled')
 }
 
+/**
+ * Add an object to a column.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @returns {void}
+ */
 window.digikanban.kanban.addObjectToColumn = function() {
-	const objectId = $(this).parent().find('.kanban-select-option').val();
+	const objectId   = $(this).parent().find('.kanban-select-option').val();
 	const categoryId = $(this).closest('.kanban-column').attr('category-id');
-	const token = window.saturne.toolbox.getToken();
+	const token      = window.saturne.toolbox.getToken();
 
 	let objectType = $('#object_type').val();
-	let url = $('#ajax_actions_url').val();
+	let url        = $('#ajax_actions_url').val();
 
 	window.saturne.loader.display($(this).parent().find('.kanban-select-option'));
 	url += '?action=add_object_to_column&object_id=' + objectId + '&category_id=' + categoryId + '&token=' + token + '&object_type=' + objectType;
@@ -284,6 +300,14 @@ window.digikanban.kanban.addObjectToColumn = function() {
 	});
 };
 
+/**
+ * Refresh the selector after adding an object to a column.
+ *
+ * @since   1.0.0
+ * @version 1.0.0
+ *
+ * @returns {void}
+ */
 window.digikanban.kanban.refreshSelector = function() {
 	return new Promise((resolve, reject) => {
 		let token = window.saturne.toolbox.getToken();
@@ -298,7 +322,7 @@ window.digikanban.kanban.refreshSelector = function() {
 			success: function(resp) {
 				form.each(function() {
 					let selectorId = $(this).find('select').attr('id');
-					$(this).replaceWith($(resp).find('#' + selectorId).closest('form')); // Remplacer uniquement si le nouveau sélecteur existe
+					$(this).replaceWith($(resp).find('#' + selectorId).closest('form'));
 				});
 				resolve();
 			},
@@ -308,15 +332,4 @@ window.digikanban.kanban.refreshSelector = function() {
 			}
 		});
 	});
-};
-
-window.digikanban.kanban.toggleFullscreen = function() {
-	const kanbanBoard = document.getElementById('kanban-board');
-	if (!document.fullscreenElement) {
-		kanbanBoard.requestFullscreen().catch(err => {
-			console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-		});
-	} else {
-		document.exitFullscreen();
-	}
 };
