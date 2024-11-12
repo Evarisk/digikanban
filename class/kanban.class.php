@@ -74,6 +74,7 @@ class Kanban extends SaturneObject
 		'import_key'    => ['type' => 'varchar(14)',  'label' => 'ImportId',         'enabled' => 1, 'position' => 60,  'notnull' => 0, 'visible' => 0, 'index' => 0],
 		'label'         => ['type' => 'varchar(255)', 'label' => 'Label',            'enabled' => 1, 'position' => 80,  'notnull' => 1, 'visible' => 1],
 		'description'	=> ['type' => 'text',         'label' => 'Description',      'enabled' => 1, 'position' => 90,  'notnull' => 0, 'visible' => 1],
+		'image_path'	=> ['type' => 'varchar(255)', 'label' => 'ImagePath',        'enabled' => 1, 'position' => 95,  'notnull' => 0, 'visible' => 3],
 		'status'		=> ['type' => 'integer',      'label' => 'Status',           'enabled' => 1, 'position' => 100, 'notnull' => 1, 'visible' => 0, 'default' => 1],
 		'object_type'   => ['type' => 'varchar(255)', 'label' => 'ObjectType',       'enabled' => 1, 'position' => 105,  'notnull' => 1, 'visible' => 4, 'showinpwa' => 0, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'positioncard' => 2],
 		'fk_user_creat' => ['type' => 'integer',      'label' => 'UserCreator',      'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => 0],

@@ -1,4 +1,4 @@
-<div id="kanban-board" class="kanban-board" style="background-image: url('https://www.w3schools.com/w3images/lights.jpg')">
+<div id="kanban-board" class="kanban-board" style="background-image: url(<?php echo $object->image_path ?>)">
 	<?php
 	// Cette section gère l'affichage des colonnes et des objets associés dans le Kanban
 	// Itération sur les catégories (colonnes du Kanban)

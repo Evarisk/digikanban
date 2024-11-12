@@ -22,6 +22,7 @@ CREATE TABLE llx_digikanban_kanban(
     import_key      varchar(255),
     label           varchar(255),
     description     text,
+    image_path      varchar(255),
     status          tinyint(4) DEFAULT 1,
     object_type     varchar(255),
     fk_user_creat   integer

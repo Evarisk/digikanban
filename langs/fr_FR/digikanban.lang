@@ -21,3 +21,10 @@ DigiKanbanDescription = DigiKanban est un outil de gestion de projet basé sur l
 
 # Liste des Kanban - Kanban List
 ObjectType = Type d'objet
+
+#
+# Kanban - Kanban
+#
+
+# Data - Donnée
+ImagePath = URL de l'image de fond
