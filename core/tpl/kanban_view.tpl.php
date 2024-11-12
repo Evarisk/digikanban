@@ -35,13 +35,16 @@
 			}
 			print '</div>';
 
-			print '<div class="add-item">';
-			print '<form method="POST" action="add_object_to_kanban.php">';
-			print $objectSelector;
-			print '<button type="button" disabled class="butAction butActionRefused validate-button">Valider</button>';
-			print '</form>';
+			if (!$publicView) {
+				print '<div class="add-item">';
+				print '<form method="POST" action="add_object_to_kanban.php">';
+				print $objectSelector;
+				print '<button type="button" disabled class="butAction butActionRefused validate-button">Valider</button>';
+				print '</form>';
+				print '</div>';
+			}
 			print '</div>';
-			print '</div>';
+
 		}
 	}
 	?>

@@ -28,3 +28,4 @@ ObjectType = Type d'objet
 
 # Data - Donnée
 ImagePath = URL de l'image de fond
+SeePublicInterface = Voir l'interface publique

@@ -21,6 +21,15 @@
  *		\brief      Page to create/edit/view kanban
  */
 
+if ( ! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if ( ! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if ( ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if ( ! defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if ( ! defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if ( ! defined('NOIPCHECK'))      define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if ( ! defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+
+
 // Load digikanban environment
 if (file_exists('../digikanban.main.inc.php')) {
 	require_once __DIR__ . '/../digikanban.main.inc.php';
@@ -41,8 +50,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 // Load module libraries
-require_once __DIR__ . '/../../class/kanban.class.php';
-require_once __DIR__ . '/../../lib/digikanban_kanban.lib.php';
+require_once __DIR__ . '/../class/kanban.class.php';
+require_once __DIR__ . '/../lib/digikanban_kanban.lib.php';
 
 
 // Global variables definitions
@@ -89,15 +98,13 @@ foreach ($object->fields as $key => $val) {
 if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+$currentKanban = $object->fetchAll('', '', 0,0, ['customsql' => ' t.track_id = "' . GETPOST('track_id') . '"']);
 
-$permissiontoread   = $user->rights->digikanban->kanban->read;
-$permissiontoadd    = $user->rights->digikanban->kanban->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->digikanban->kanban->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-
-// Security check - Protection if external user
-saturne_check_access($permissiontoread, $object);
-
+if (is_array($currentKanban) && !empty($currentKanban)) {
+	$object = array_shift($currentKanban);
+} else {
+	accessforbidden();
+}
 /*
  * Actions
  */
@@ -129,7 +136,7 @@ if (empty($reshook)) {
 $title    = $langs->trans(ucfirst($object->element));
 $help_url = 'FR:Module_digikanban';
 
-saturne_header(1,'', $title, $help_url, '', 0, 0);
+saturne_header(1,'', $title, $help_url, '', 1, 0);
 
 // Part to create
 if ($action == 'create') {
@@ -275,25 +282,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<input hidden class="main-category-id" id="main_category_id" value="' . $categorie->id . '">';
 
-	include_once __DIR__ . '/../../core/tpl/kanban_view.tpl.php';
+	$publicView = true;
+
+	include_once __DIR__ . '/../core/tpl/kanban_view.tpl.php';
 
 	print dol_get_fiche_end();
-
-	//show public page with track id
-	print '<a href="' . dol_buildpath('/custom/digikanban/public/public_kanban.php', 1) . '?track_id=' . $object->track_id . '" target="_blank">' . $langs->trans('SeePublicInterface') . '</a>';
-
-	print '<div class="fichecenter"><div class="fichehalfright">';
-
-	$maxEvent = 10;
-
-	$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/saturne/view/saturne_agenda.php', 1) . '?id=' . $object->id . '&module_name=digikanban&object_type=' . $object->element);
-
-	// List of actions on element
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, '', 1, '', $MAXEVENT, '', $morehtmlcenter);
-
-	print '</div></div>';
 }
 
 // End of page
