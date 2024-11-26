@@ -216,7 +216,14 @@ class Kanban extends SaturneObject
 		}
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
-		$actionsButton = '<span class="fas fa-ellipsis-h edit-card actions-icon"></span>';
+		$actionsButton = '
+    <span class="fas fa-ellipsis-h edit-card actions-icon" onclick="window.digikanban.kanban.toggleCardMenu(this)"></span>
+    <div class="card-menu hidden">
+        <div class="menu-item delete" onclick="window.digikanban.kanban.deleteCard(this)" data-card-id="' . $object->id . '">
+            <i class="fas fa-trash"></i> Supprimer
+        </div>
+    </div>
+';
 
 		$return = '<div>';
 		$return .= '<div class="kanban-card info-box ">';

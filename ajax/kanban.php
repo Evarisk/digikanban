@@ -136,3 +136,15 @@ if ($action == 'delete_column') {
 	$categorie->fetch($category_id);
 	$result = $categorie->delete($user);
 }
+
+if ($action == 'remove_card_from_kanban') {
+	$object->fetch($object_id);
+	$categorie->fetch($category_id);
+	$categoryType = $categorie::$MAP_ID_TO_CODE[$categorie->type];
+	$result = $categorie->del_type($object, $categoryType);
+	if ($result < 0) {
+		echo 'Error';
+	} else {
+		echo 'Success';
+	}
+}

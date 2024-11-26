@@ -387,3 +387,44 @@ document.addEventListener('click', function(event) {
 		document.querySelectorAll('.column-menu').forEach(menu => menu.classList.add('hidden'));
 	}
 });
+
+window.digikanban.kanban.toggleCardMenu = function(ellipsisElement) {
+	const menu = ellipsisElement.nextElementSibling; 
+	if (menu.classList.contains('hidden')) {
+		document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
+		menu.classList.remove('hidden');
+	} else {
+		menu.classList.add('hidden');
+	}
+};
+
+window.digikanban.kanban.deleteCard = function(menuItem) {
+	const card = menuItem.closest('.kanban-card');
+	const cardId = menuItem.getAttribute('data-card-id');
+	const url = $('#ajax_actions_url').val();
+	const token = $('#token').val();
+	const objectType = $('#object_type').val();
+	const columnId = card.closest('.kanban-column').getAttribute('category-id');
+	const columnCounterElement = $(menuItem).closest('.kanban-column').find('.column-counter');
+
+	if (confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) {
+		$.ajax({
+			url: `${url}?action=remove_card_from_kanban&token=${token}&object_id=${cardId}&object_type=${objectType}&category_id=${columnId}`,
+			type: 'POST',
+			success: function() {
+				card.remove();
+				alert('Carte supprimée avec succès.');
+				columnCounterElement.text(parseInt(columnCounterElement.text()) - 1);
+			},
+			error: function() {
+				alert('Erreur lors de la suppression de la carte.');
+			},
+		});
+	}
+};
+
+document.addEventListener('click', function(event) {
+	if (!event.target.closest('.kanban-card-header')) {
+		document.querySelectorAll('.card-menu').forEach(menu => menu.classList.add('hidden'));
+	}
+});
