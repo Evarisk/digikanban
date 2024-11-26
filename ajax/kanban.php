@@ -37,7 +37,7 @@ $object = new $objectLinked($db);
 
 $categorie->fetch($category_id);
 $linkedCategories = $categorie->get_filles();
-
+$elementArray	 = get_kanban_linkable_objects();
 
 $action    = GETPOST('action');
 $categorie = new Categorie($db);
@@ -98,12 +98,7 @@ if ($action == 'add_object_to_column') {
 	if ($result < 0) {
 		echo 'Error';
 	} else {
-		if (method_exists($object, 'getKanbanView')) {
-
-			print $object->getKanbanView();
-		} else {
-			print $kanban->getObjectKanbanView($object);
-		}
+		print $kanban->getObjectKanbanView($object, $elementArray[$object_type]);
 	}
 }
 

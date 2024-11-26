@@ -178,31 +178,58 @@ class Kanban extends SaturneObject
 		return 0;
 	}
 
-	public function getObjectKanbanView($object) {
+	public function getObjectKanbanView($object, $objectMetadata) {
 		global $langs;
+
+		$objectTitle = method_exists($object, 'getNomUrl') ? $object->getNomUrl() : $object->ref;
+		$objectSubtitle = htmlspecialchars($object->label ?? '');
+		$objectPicto = $object->picto;
+		$moreData = '';
+
+		if ($object->element == 'project') {
+			$object->getLinesArray($user);
+			$tasksCounter = is_array($object->lines) ? count($object->lines) : 0;
+			if (is_array($object->lines) && !empty($object->lines)) {
+				foreach($object->lines as $task) {
+					$timeSpent += $task->duration_effective;
+				}
+			}
+			$projectDate = dol_print_date($object->date ?? time(), 'day');
+			$moreData = '<span class="kanban-data"><i class="fas fa-tasks"></i> ' . $tasksCounter . '</span> ';
+			$timeSpentInHoursAndMinutes = gmdate('H:i', $timeSpent);
+			$moreData .= '<span class="kanban-data"><i class="fas fa-clock"></i> ' . htmlspecialchars($timeSpentInHoursAndMinutes) . '</span> ';
+			$moreData .= '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . $projectDate . '</span>';
+		}
+
+		$nameField = $objectMetadata['name_field'];
+		if (strstr($nameField, ',')) {
+			$nameFields = explode(', ', $nameField);
+			if (is_array($nameFields) && !empty($nameFields)) {
+				foreach ($nameFields as $subnameField) {
+					if ($subnameField != 'ref') {
+						$objectSubtitle .= $object->$subnameField . ' ';
+					}
+				}
+			}
+		} else {
+			$objectSubtitle = $object->$nameField;
+		}
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $object->picto);
-		$return .= '</span>';
-		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($object, 'getNomUrl') ? $object->getNomUrl() : $object->ref).'</span>';
+		$return = '<div>';
+		$return .= '<div class="kanban-card info-box ">';
 		if ($selected >= 0) {
-			$return .= '<input id="cb'.$object->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			$return .= '<input hidden id="cb'.$object->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($object, 'type_lib')) {
-			$return .= '<br><span class="info-box-label opacitymedium" title="'.$object->type_lib[$object->type].'">'.substr($object->type_lib[$object->type], 0, 24).'...</span>';
-		}
-		if (method_exists($object, 'solde')) {
-			$return .= '<br><a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$object->id.'">';
-			$return .= '<span class="opacitymedium">'.$langs->trans("Balance").'</span> : <span class="amount">'.price(price2num($object->solde(1), 'MT'), 0, $langs, 1, -1, -1, $object->currency_code).'</span>';
-		}
-		if (method_exists($object, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$object->getLibStatut(3).'</div>';
-		}
+		$return .= '<div class="kanban-card-header">';
+		$return .= '<span class="kanban-card-ref">' . img_picto('', $objectPicto) . '&nbsp;' . $objectTitle . '</span>';
+		$return .= '</div>';
+		$return .= '<div class="kanban-card-body">';
+		$return .= '<span class="kanban-card-subtitle">' . $objectSubtitle . '</span>';
+		$return .= '</div>';
+		$return .= '<div class="kanban-card-footer">';
+		$return .= $moreData;
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

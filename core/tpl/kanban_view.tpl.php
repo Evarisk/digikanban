@@ -9,7 +9,7 @@
 		print '<input hidden id="object_array" value="' . htmlspecialchars(json_encode($objectArray)) . '">';
 
 		foreach ($columns as $column) {
-			$objectSelector = $form->selectArray($objectLinkedMetadata['post_name'] . $column['category_id'], $objectArray, GETPOST($objectLinkedMetadata['post_name']), $langs->trans('Select') . ' ' . strtolower($langs->trans($objectLinkedMetadata['langs'])), 0, 0, '', 0, 0, dol_strlen(GETPOST('fromtype')) > 0 && GETPOST('fromtype') != $objectLinkedMetadata['link_name'], '', 'maxwidth200 widthcentpercentminusxx kanban-select-option');
+			$objectSelector = $form->selectArray($objectLinkedMetadata['post_name'] . $column['category_id'], $objectArray, GETPOST($objectLinkedMetadata['post_name']), $langs->trans('Select') . ' ' . strtolower($langs->trans($objectLinkedMetadata['langs'])), 0, 0, '', 0, 0, dol_strlen(GETPOST('fromtype')) > 0 && GETPOST('fromtype') != $objectLinkedMetadata['link_name'], '', 'maxwidth400 minheight30 widthcentpercentminusxx kanban-select-option');
 			$selectorName = $objectLinkedMetadata['post_name'] . $column['category_id'];
 			print '<div class="kanban-column" category-id="'. $column['category_id'] .'">';
 			print '<div class="kanban-column-header">';
@@ -26,20 +26,16 @@
 
 			if (is_array($objectsInColumn) && !empty($objectsInColumn)) {
 				foreach($objectsInColumn as $objectInColumn) {
-					if (method_exists($objectInColumn, 'getKanbanView')) {
-						print $objectInColumn->getKanbanView();
-					} else {
-						print $object->getObjectKanbanView($objectInColumn);
-					}
+					print $object->getObjectKanbanView($objectInColumn, $elementArray[$objectLinkedType]);
 				}
 			}
 			print '</div>';
 
 			if (!$publicView) {
-				print '<div class="add-item">';
+				print '<div class="add-item" >';
 				print '<form method="POST" action="add_object_to_kanban.php">';
 				print $objectSelector;
-				print '<button type="button" disabled class="butAction butActionRefused validate-button">Valider</button>';
+				print '<button type="button" disabled class="butAction butActionRefused validate-button"><i class="fas fa-plus"></i></button>';
 				print '</form>';
 				print '</div>';
 			}
