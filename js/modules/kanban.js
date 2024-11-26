@@ -108,8 +108,12 @@ window.digikanban.kanban.saveCardOrder = function() {
 			order: cardOrder
 		}),
 		contentType: "application/json",
-		success: function(response) {
+		success: function() {
 			console.log("Card order saved successfully.");
+			for (let i = 0; i < cardOrder.length; i++) {
+				let columnCounterElement = $('.kanban-column[category-id="' + cardOrder[i].columnId + '"]').find('.column-counter');
+				columnCounterElement.text(cardOrder[i].cards.length);
+			}
 		},
 		error: function() {
 			console.log("Error saving card order.");
@@ -197,20 +201,30 @@ window.digikanban.kanban.addColumn = function() {
  * @returns {void}
  */
 window.digikanban.kanban.editColumn = function(nameElement) {
-	const currentName = nameElement.innerText;
-	const input = document.createElement('input');
+	let columnNameElement = $(nameElement).closest('.kanban-column').find('.column-name')[0]; // Récupère l'élément DOM
+
+	if (!columnNameElement) {
+		console.error('Erreur : Impossible de trouver l\'élément column-name.');
+		return;
+	}
+
+	const currentName = columnNameElement.innerText.trim(); // Récupère le texte actuel
+	const input = document.createElement('input'); // Crée un champ input
 	input.type = 'text';
 	input.value = currentName;
 	input.classList.add('column-name-input');
 
 	input.addEventListener('blur', function() {
-		saveColumnName(input, nameElement);
+		saveColumnName(input, columnNameElement);
 	});
 
-	nameElement.style.display = 'none';
-	nameElement.parentNode.insertBefore(input, nameElement);
-	input.focus();
-}
+	$(nameElement).closest('.kanban-column').find('.column-menu').addClass('hidden');
+
+	columnNameElement.style.display = 'none';
+	columnNameElement.parentNode.insertBefore(input, columnNameElement);
+	input.focus(); // Met le curseur dans l'input
+};
+
 
 /**
  * Save the new column name.
@@ -277,6 +291,8 @@ window.digikanban.kanban.addObjectToColumn = function() {
 	window.saturne.loader.display($(this).parent().find('.kanban-select-option'));
 	url += '?action=add_object_to_column&object_id=' + objectId + '&category_id=' + categoryId + '&token=' + token + '&object_type=' + objectType;
 
+	let columnCounterElement = $(this).closest('.kanban-column').find('.column-counter');
+
 	$.ajax({
 		url: url,
 		type: 'POST',
@@ -292,6 +308,7 @@ window.digikanban.kanban.addObjectToColumn = function() {
 				console.log("Error refreshing selectors.");
 				$('.wpeo-loader').removeClass('wpeo-loader');
 			});
+			columnCounterElement.text(parseInt(columnCounterElement.text()) + 1);
 		},
 		error: function() {
 			console.log("Failed to add object to column.");
@@ -333,3 +350,40 @@ window.digikanban.kanban.refreshSelector = function() {
 		});
 	});
 };
+
+window.digikanban.kanban.toggleColumnMenu = function(iconElement) {
+	const menu = iconElement.nextElementSibling;
+	if (menu.classList.contains('hidden')) {
+		document.querySelectorAll('.column-menu').forEach(m => m.classList.add('hidden')); // Fermer tous les autres menus
+		menu.classList.remove('hidden');
+	} else {
+		menu.classList.add('hidden');
+	}
+};
+
+window.digikanban.kanban.deleteColumn = function(menuItem) {
+	const column = menuItem.closest('.kanban-column');
+	const columnId = column.getAttribute('category-id');
+	const url = $('#ajax_actions_url').val();
+	const token = $('#token').val();
+	const objectType = $('#object_type').val();
+	if (confirm('Êtes-vous sûr de vouloir supprimer cette colonne ?')) {
+		$.ajax({
+			url: `${url}?action=delete_column&token=${token}&category_id=${columnId}&object_type=${objectType}`,
+			type: 'POST',
+			success: function() {
+				column.remove();
+				alert('Colonne supprimée avec succès.');
+			},
+			error: function() {
+				alert('Erreur lors de la suppression de la colonne.');
+			},
+		});
+	}
+};
+
+document.addEventListener('click', function(event) {
+	if (!event.target.closest('.kanban-column-header')) {
+		document.querySelectorAll('.column-menu').forEach(menu => menu.classList.add('hidden'));
+	}
+});

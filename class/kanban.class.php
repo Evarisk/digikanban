@@ -216,6 +216,7 @@ class Kanban extends SaturneObject
 		}
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+		$actionsButton = '<span class="fas fa-ellipsis-h edit-card actions-icon"></span>';
 
 		$return = '<div>';
 		$return .= '<div class="kanban-card info-box ">';
@@ -223,7 +224,7 @@ class Kanban extends SaturneObject
 			$return .= '<input hidden id="cb'.$object->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= '<div class="kanban-card-header">';
-		$return .= '<span class="kanban-card-ref">' . img_picto('', $objectPicto) . '&nbsp;' . $objectTitle . '</span>';
+		$return .= '<span class="kanban-card-ref">' . img_picto('', $objectPicto) . '&nbsp;' . $objectTitle . '&nbsp;' . $actionsButton .'</span>';
 		$return .= '</div>';
 		$return .= '<div class="kanban-card-body">';
 		$return .= '<span class="kanban-card-subtitle">' . $objectSubtitle . '</span>';

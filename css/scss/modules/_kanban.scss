@@ -23,34 +23,48 @@ body {
   padding: 10px;
   width: 30%;
   min-height: 500px;
-  max-height: 600px; /* Hauteur maximale définie */
+  max-height: 600px;
   min-width: 300px;
-  overflow-y: auto;  /* Permet le défilement vertical si le contenu dépasse */
+  overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 .kanban-column-header {
-  font-size: 1.5em;
-  font-weight: bold;
-  text-align: center;
-  padding: 10px;
-  background-color: #333;
-  color: white;
-  border-radius: 8px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 8px;
+  position: relative;
 }
 
-.kanban-column-header:hover .column-name,
-.kanban-column-header:hover .edit-icon {
-  color: #f1c40f;
-  cursor: pointer;
+.column-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.kanban-column-header:hover {
-  cursor: pointer;
+.column-name {
+  font-size: 1em;
+  font-weight: bold;
 }
+
+.column-counter {
+  background-color: rgba(0, 0, 0, 0.33);
+  color: #d3d3d3;
+  font-size: 0.9em;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  margin-left: 0;
+}
+
+.actions-icon:hover {
+  color: #ffdd57;
+}
+
 
 .edit-icon {
   margin-left: 10px;
@@ -66,18 +80,17 @@ body {
 .kanban-column-body {
   margin-top: 10px;
   padding: 10px;
-  background-color: #fff;
   border-radius: 5px;
   min-height: 400px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border: 2px dashed #ddd;
 }
 
 .add-item {
   text-align: center;
   margin-top: 10px;
+  margin-bottom: 0;
   height: 50px;
 }
 
@@ -228,9 +241,63 @@ body {
 }
 
 #kanban-board {
-  cursor: grab; /* Curseur par défaut pour indiquer le défilement */
+  cursor: grab;
 }
 
 .dragging {
   cursor: grabbing !important;
+}
+
+.actions-icon {
+  color: #999;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.actions-icon:hover {
+  color: #666;
+}
+
+.column-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  padding: 5px 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+}
+
+.column-menu.hidden {
+  display: none;
+}
+
+.menu-item {
+  padding: 8px 12px;
+  font-size: 0.9em;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-item:hover {
+  background-color: #f9f9f9;
+}
+
+.menu-item.delete {
+  color: #e74c3c;
+}
+
+.menu-item.delete:hover {
+  background-color: #ffecec;
+}
+
+.menu-item i {
+  font-size: 0.9em; 
 }

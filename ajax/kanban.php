@@ -131,3 +131,8 @@ if ($action == 'move_object') {
 		}
 	}
 }
+
+if ($action == 'delete_column') {
+	$categorie->fetch($category_id);
+	$result = $categorie->delete($user);
+}
