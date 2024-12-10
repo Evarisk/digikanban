@@ -67,6 +67,6 @@
 	?>
 
 	<div class="kanban-add-column" onclick="window.digikanban.kanban.addColumn()">
-		<div class="add-column-text">+ Ajouter une colonne</div>
+		<i class="fas fa-plus"></i>
 	</div>
 </div>

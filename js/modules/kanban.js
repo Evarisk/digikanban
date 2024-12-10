@@ -389,7 +389,7 @@ document.addEventListener('click', function(event) {
 });
 
 window.digikanban.kanban.toggleCardMenu = function(ellipsisElement) {
-	const menu = ellipsisElement.nextElementSibling; 
+	const menu = ellipsisElement.nextElementSibling;
 	if (menu.classList.contains('hidden')) {
 		document.querySelectorAll('.card-menu').forEach(m => m.classList.add('hidden'));
 		menu.classList.remove('hidden');
