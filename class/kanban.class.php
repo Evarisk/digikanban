@@ -181,7 +181,7 @@ class Kanban extends SaturneObject
 	public function getObjectKanbanView($object, $objectMetadata) {
 		global $langs;
 
-		$objectTitle = method_exists($object, 'getNomUrl') ? $object->getNomUrl() : $object->ref;
+		$objectTitle = method_exists($object, 'getNomUrl') ? $object->getNomUrl(1) : $object->ref;
 		$objectSubtitle = htmlspecialchars($object->label ?? '');
 		$objectPicto = $object->picto;
 		$moreData = '';
@@ -231,7 +231,7 @@ class Kanban extends SaturneObject
 			$return .= '<input hidden id="cb'.$object->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= '<div class="kanban-card-header">';
-		$return .= '<span class="kanban-card-ref">' . img_picto('', $objectPicto) . '&nbsp;' . $objectTitle . '&nbsp;' . $actionsButton .'</span>';
+		$return .= '<span class="kanban-card-ref">' . $objectTitle . '&nbsp;' . $actionsButton .'</span>';
 		$return .= '</div>';
 		$return .= '<div class="kanban-card-body">';
 		$return .= '<span class="kanban-card-subtitle">' . $objectSubtitle . '</span>';
