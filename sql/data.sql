@@ -20,3 +20,6 @@ INSERT INTO `llx_c_tasks_columns` (`rowid`, `entity`, `ref`, `label`, `descripti
 INSERT INTO `llx_c_tasks_columns` (`rowid`, `entity`, `ref`, `label`, `description`, `active`, `lowerpercent`, `upperpercent`, `position`) VALUES(3, 0, 'InProgress', 'InProgress', 'InProgressDescription', 1, '41', '60',  20);
 INSERT INTO `llx_c_tasks_columns` (`rowid`, `entity`, `ref`, `label`, `description`, `active`, `lowerpercent`, `upperpercent`, `position`) VALUES(4, 0, 'InReview',   'InReview',   'InReviewDescription',   1, '61', '80',  30);
 INSERT INTO `llx_c_tasks_columns` (`rowid`, `entity`, `ref`, `label`, `description`, `active`, `lowerpercent`, `upperpercent`, `position`) VALUES(5, 0, 'Done',       'Done',       'DoneDescription',       1, '81', '100', 40);
+
+ALTER TABLE llx_digikanban_kanban ADD COLUMN image_path varchar(255);
+ALTER TABLE llx_digikanban_kanban ADD COLUMN track_id varchar(255);
