@@ -178,11 +178,20 @@ body {
   font-size: 14px;
   color: #007bff;
   margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .kanban-card-header .kanban-card-ref {
-  display: flex;
-  align-items: center;
+  display: inline-block;
+  flex-grow: 1;
+}
+
+.kanban-card-header .kanban-card-action {
+  display: inline-flex;
+  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .kanban-card-body {

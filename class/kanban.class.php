@@ -181,10 +181,13 @@ class Kanban extends SaturneObject
 	public function getObjectKanbanView($object, $objectMetadata) {
 		global $langs;
 
+		$userAffected = new User($this->db);
+
 		$objectTitle = method_exists($object, 'getNomUrl') ? $object->getNomUrl(1) : $object->ref;
 		$objectSubtitle = htmlspecialchars($object->label ?? '');
-		$objectPicto = $object->picto;
-		$moreData = '';
+		$moreFooterData = '';
+		$moreBodyData = '';
+		$moreHeaderData = '';
 
 		if ($object->element == 'project') {
 			$object->getLinesArray($user);
@@ -195,10 +198,16 @@ class Kanban extends SaturneObject
 				}
 			}
 			$projectDate = dol_print_date($object->date ?? time(), 'day');
-			$moreData = '<span class="kanban-data"><i class="fas fa-tasks"></i> ' . $tasksCounter . '</span> ';
+			$moreFooterData = '<span class="kanban-data"><i class="fas fa-tasks"></i> ' . $tasksCounter . '</span> ';
 			$timeSpentInHoursAndMinutes = gmdate('H:i', $timeSpent);
-			$moreData .= '<span class="kanban-data"><i class="fas fa-clock"></i> ' . htmlspecialchars($timeSpentInHoursAndMinutes) . '</span> ';
-			$moreData .= '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . $projectDate . '</span>';
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-clock"></i> ' . htmlspecialchars($timeSpentInHoursAndMinutes) . '</span> ';
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . $projectDate . '</span>';
+		} else if ($object->element == 'ticket') {
+			$moreHeaderData = $object->getLibStatut(1);
+			$moreFooterData = '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . dol_print_date($object->date_creation, 'day') . '</span>';
+			$userAffected->fetch($object->fk_user_assign);
+			$moreFooterData .= '<span class="kanban-data"> ' . $userAffected->getNomUrl(1) . '</span>';
+			$moreBodyData = '<br><span class="kanban-data"> ' .  $object->type_label . '</span>';
 		}
 
 		$nameField = $objectMetadata['name_field'];
@@ -224,20 +233,21 @@ class Kanban extends SaturneObject
         </div>
     </div>
 ';
-
 		$return = '<div>';
 		$return .= '<div class="kanban-card info-box ">';
 		if ($selected >= 0) {
 			$return .= '<input hidden id="cb'.$object->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= '<div class="kanban-card-header">';
-		$return .= '<span class="kanban-card-ref">' . $objectTitle . '&nbsp;' . $actionsButton .'</span>';
+		$return .= '<span class="kanban-card-ref">' . $objectTitle . '&nbsp;' . $moreHeaderData . '</span>';
+		$return .= '<span class="kanban-card-action">' . $actionsButton .'</span>';
 		$return .= '</div>';
 		$return .= '<div class="kanban-card-body">';
 		$return .= '<span class="kanban-card-subtitle">' . $objectSubtitle . '</span>';
+		$return .= '<span class="kanban-card-subtitle">' . $moreBodyData . '</span>';
 		$return .= '</div>';
 		$return .= '<div class="kanban-card-footer">';
-		$return .= $moreData;
+		$return .= $moreFooterData;
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
