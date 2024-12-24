@@ -213,12 +213,13 @@ class Kanban extends SaturneObject
 				}
 			}
 			$projectDate = dol_print_date($object->date ?? time(), 'day');
+			$moreHeaderData = $object->getLibStatut(2);
 			$moreFooterData = '<span class="kanban-data"><i class="fas fa-tasks"></i> ' . $tasksCounter . '</span> ';
 			$timeSpentInHoursAndMinutes = gmdate('H:i', $timeSpent);
 			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-clock"></i> ' . htmlspecialchars($timeSpentInHoursAndMinutes) . '</span> ';
 			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . $projectDate . '</span>';
 		} else if ($object->element == 'ticket') {
-			$moreHeaderData = $object->getLibStatut(1);
+			$moreHeaderData = $object->getLibStatut(2);
 			$moreFooterData = '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . dol_print_date($object->date_creation, 'day') . '</span>';
 			$userAffected->fetch($object->fk_user_assign);
 			$moreFooterData .= '<span class="kanban-data"> ' . $userAffected->getNomUrl(1) . '</span>';
@@ -229,6 +230,10 @@ class Kanban extends SaturneObject
 			$moreBodyData = '<br><span class="kanban-data"> ' . $projectAffected->getNomUrl(1) . '</span>';
 			$moreFooterData = '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . dol_print_date($object->date_creation, 'day') . '</span>';
 			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-euro-sign"></i> ' . price($object->total_ht) . '</span>';
+		} else if ($object->element == 'societe') {
+			$moreHeaderData = $object->getLibStatut(2);
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-envelope"></i> ' . $object->email . '</span>';
+			$moreFooterData .= '<br><span class="kanban-data"><i class="fas fa-phone"></i> ' . $object->phone . '</span>';
 		}
 
 
