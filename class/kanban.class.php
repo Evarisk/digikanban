@@ -182,12 +182,27 @@ class Kanban extends SaturneObject
 		global $langs;
 
 		$userAffected = new User($this->db);
+		$projectAffected = new Project($this->db);
 
 		$objectTitle = method_exists($object, 'getNomUrl') ? $object->getNomUrl(1) : $object->ref;
 		$objectSubtitle = htmlspecialchars($object->label ?? '');
 		$moreFooterData = '';
 		$moreBodyData = '';
 		$moreHeaderData = '';
+
+		$nameField = $objectMetadata['name_field'];
+		if (strstr($nameField, ',')) {
+			$nameFields = explode(', ', $nameField);
+			if (is_array($nameFields) && !empty($nameFields)) {
+				foreach ($nameFields as $subnameField) {
+					if ($subnameField != 'ref') {
+						$objectSubtitle .= $object->$subnameField . ' ';
+					}
+				}
+			}
+		} else {
+			$objectSubtitle = $object->$nameField;
+		}
 
 		if ($object->element == 'project') {
 			$object->getLinesArray($user);
@@ -208,21 +223,14 @@ class Kanban extends SaturneObject
 			$userAffected->fetch($object->fk_user_assign);
 			$moreFooterData .= '<span class="kanban-data"> ' . $userAffected->getNomUrl(1) . '</span>';
 			$moreBodyData = '<br><span class="kanban-data"> ' .  $object->type_label . '</span>';
+		} else if ($object->element == 'propal') {
+			$moreHeaderData .= '<span class="kanban-data"> ' . $object->getLibStatut(2) . '</span>';
+			$projectAffected->fetch($object->fk_project);
+			$moreBodyData = '<br><span class="kanban-data"> ' . $projectAffected->getNomUrl(1) . '</span>';
+			$moreFooterData = '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . dol_print_date($object->date_creation, 'day') . '</span>';
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-euro-sign"></i> ' . price($object->total_ht) . '</span>';
 		}
 
-		$nameField = $objectMetadata['name_field'];
-		if (strstr($nameField, ',')) {
-			$nameFields = explode(', ', $nameField);
-			if (is_array($nameFields) && !empty($nameFields)) {
-				foreach ($nameFields as $subnameField) {
-					if ($subnameField != 'ref') {
-						$objectSubtitle .= $object->$subnameField . ' ';
-					}
-				}
-			}
-		} else {
-			$objectSubtitle = $object->$nameField;
-		}
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 		$actionsButton = '
