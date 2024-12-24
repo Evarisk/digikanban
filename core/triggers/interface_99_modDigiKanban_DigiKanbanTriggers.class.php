@@ -166,6 +166,34 @@ class InterfaceDigiKanbanTriggers extends DolibarrTriggers
 				$actioncomm->label = $langs->transnoentities('ObjectCreateTrigger', $langs->transnoentities(ucfirst($object->element)), $object->ref);
 				$actioncomm->create($user);
 				break;
+
+			case 'CATEGORY_LINK' :
+				$objectLinked        = $object->context['linkto'];
+				$categoryToAdd       = $object;
+				$currentCategory     = new Categorie($this->db);
+				$parentCategory      = new Categorie($this->db);
+				$parentCategoryToAdd = new Categorie($this->db);
+
+				$parentCategoryToAdd->fetch($categoryToAdd->fk_parent);
+
+				$objectCategories = $objectLinked->getCategoriesCommon($objectLinked->element);
+				$regex            = '/KB[0-9]{4}-[0-9]{4}/';
+				$existingParents  = [];
+
+				if (is_array($objectCategories) && !empty($objectCategories)) {
+					foreach ($objectCategories as $objectCategoryId) {
+						$currentCategory->fetch($objectCategoryId);
+						$parentCategory->fetch($currentCategory->fk_parent);
+
+						if (in_array($parentCategory->label, $existingParents)) {
+							return -1;
+						}
+						if (preg_match($regex, $parentCategory->label)) {
+							$existingParents[] = $parentCategory->label;
+						}
+					}
+				}
+
 		}
 		return 0;
 	}
