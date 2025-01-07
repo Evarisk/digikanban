@@ -43,6 +43,18 @@ window.digikanban.kanban.event = function() {
 			},
 		});
 
+
+		// Rendre les colonnes déplaçables via le header
+		$('#kanban-board').sortable({
+			axis: 'x',
+			items: '.kanban-column',
+			handle: '.kanban-column-header',
+			placeholder: 'kanban-column-placeholder',
+			stop: function(event, ui) {
+				window.digikanban.kanban.saveColumnOrder();
+			},
+		});
+
 		const kanbanBoard = document.getElementById('kanban-board');
 		let isDragging = false;
 		let startX, scrollLeft;
@@ -76,6 +88,37 @@ window.digikanban.kanban.event = function() {
 			kanbanBoard.classList.remove('dragging');
 		});
 	}
+};
+
+/**
+ * Save the new column order after drag-and-drop.
+ *
+ * @since   1.1.0
+ * @version 1.1.0
+ *
+ * @returns {void}
+ */
+window.digikanban.kanban.saveColumnOrder = function() {
+	let columnOrder = [];
+	$('.kanban-column').each(function() {
+		columnOrder.push($(this).attr('category-id'));
+	});
+
+	let url = $('#ajax_actions_url').val();
+	let token = window.saturne.toolbox.getToken();
+
+	$.ajax({
+		url: `${url}?action=save_column_order&token=${token}`,
+		type: 'POST',
+		data: JSON.stringify({ order: columnOrder }),
+		contentType: 'application/json',
+		success: function() {
+			console.log('Column order saved successfully.');
+		},
+		error: function() {
+			console.error('Error saving column order.');
+		},
+	});
 };
 
 /**
