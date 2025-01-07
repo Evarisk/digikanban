@@ -21,12 +21,13 @@ body {
   background-color: #f4f4f4;
   border-radius: 8px;
   padding: 10px;
-  width: 30%;
+  width: 300px;
+  min-width: 350px;
   min-height: 500px;
   max-height: 600px;
-  min-width: 300px;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 0 0 auto;
 }
 .kanban-column-header {
   display: flex;
@@ -164,15 +165,16 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 10px 15px;
-  cursor: grab;
   margin-bottom: 10px;
-  max-width: 270px;
-  justify-content: center;
+  width: 90%;
+  margin-left: auto; 
+  margin-right: auto;
+  cursor: grab;
+  max-width: unset;
   display: flex;
   flex-direction: column;
   font-family: Arial, sans-serif;
 }
-
 .kanban-card-header {
   font-weight: bold;
   font-size: 14px;
