@@ -367,6 +367,21 @@ class modDigiKanban extends DolibarrModules
 			'target'   => '',
 			'user'     => 0
 		];
+
+		$this->menu[$r++] = [
+			'fk_menu'  => 'fk_mainmenu=digikanban',
+			'type'     => 'left',
+			'titre'   => $langs->trans('ClassicKanbans'),
+			'prefix'   => '<i class="fa fa-th-list"></i> ',
+			'leftmenu' => 'digikanban',
+			'url'      => '/digikanban/view/kanban/classic_kanban_list.php?action=create',
+			'langs'    => 'digikanban@digikanban',
+			'position' => 1000 + $r,
+			'enabled'  => 1,
+			'perms'    => '$user->rights->digikanban->kanban->read',
+			'target'   => '',
+			'user'     => 0
+		];
     }
 
     /**

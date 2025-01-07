@@ -10,10 +10,12 @@
 		$actionsButton = '<span class="fas fa-ellipsis-h"></span>';
 
 		foreach ($columns as $column) {
-			$objectSelector = $form->selectArray($objectLinkedMetadata['post_name'] . $column['category_id'], $objectArray, GETPOST($objectLinkedMetadata['post_name']), $langs->trans('Select') . ' ' . strtolower($langs->trans($objectLinkedMetadata['langs'])), 0, 0, '', 0, 0, dol_strlen(GETPOST('fromtype')) > 0 && GETPOST('fromtype') != $objectLinkedMetadata['link_name'], '', 'maxwidth400 minheight30 widthcentpercentminusxx kanban-select-option');
-			$selectorName = $objectLinkedMetadata['post_name'] . $column['category_id'];
-			$objectsInColumn = $column['objects'];
+			if (!$disableAddColumn) {
+				$objectSelector = $form->selectArray($objectLinkedMetadata['post_name'] . $column['category_id'], $objectArray, GETPOST($objectLinkedMetadata['post_name']), $langs->trans('Select') . ' ' . strtolower($langs->trans($objectLinkedMetadata['langs'])), 0, 0, '', 0, 0, dol_strlen(GETPOST('fromtype')) > 0 && GETPOST('fromtype') != $objectLinkedMetadata['link_name'], '', 'maxwidth400 minheight30 widthcentpercentminusxx kanban-select-option');
+				$selectorName = $objectLinkedMetadata['post_name'] . $column['category_id'];
+			}
 
+			$objectsInColumn = $column['objects'];
 			print '<div class="kanban-column" category-id="'. $column['category_id'] .'">';
 			print '<div class="kanban-column-header">';
 			print '<input type="hidden" id="ajax_actions_url" value="' . $ajaxActionsUrl . '">';
@@ -28,15 +30,15 @@
 			}
 
 			print '<div class="column-left">';
-			print '<span class="column-name" onclick="window.digikanban.kanban.editColumn(this)">' . htmlspecialchars($column['label']) . '</span>';
+			print '<span class="column-name" onclick="'. ($disableActions ? '' : 'window.digikanban.kanban.editColumn(this)') .'">' . $langs->transnoentities(htmlspecialchars($column['label'])) . '</span>';
 			print '<span class="column-counter">' . $objectsCounter . '</span>';
 			print '</div>';
-			print '<span class="fas fa-ellipsis-h actions-icon" onclick="window.digikanban.kanban.toggleColumnMenu(this)"></span>';
+			print '<span class="fas fa-ellipsis-h actions-icon" onclick="'. ($disableActions ? '' : 'window.digikanban.kanban.toggleColumnMenu(this)') .'"></span>';
 			print '<div class="column-menu hidden">';
-			print '  <div class="menu-item rename" onclick="window.digikanban.kanban.editColumn(this)">';
+			print '  <div class="menu-item rename" onclick="'. ($disableActions ? '' : 'window.digikanban.kanban.editColumn(this)') .'">';
 			print '    <i class="fas fa-pen"></i> Renommer';
 			print '  </div>';
-			print '  <div class="menu-item delete" onclick="window.digikanban.kanban.deleteColumn(this)">';
+			print '  <div class="menu-item delete" onclick="'. ($disableActions ? '' : 'window.digikanban.kanban.deleteColumn(this)') .'">';
 			print '    <i class="fas fa-trash"></i> Supprimer';
 			print '  </div>';
 			print '</div>';
@@ -65,8 +67,9 @@
 		}
 	}
 	?>
-
+	<?php if (!$disableAddColumn) : ?>
 	<div class="kanban-add-column" onclick="window.digikanban.kanban.addColumn()">
 		<i class="fas fa-plus"></i>
 	</div>
+	<?php endif; ?>
 </div>

@@ -22,56 +22,60 @@ window.digikanban.kanban.init = function() {
  * @return {void}
  */
 window.digikanban.kanban.event = function() {
-	$(document).on('change', '.kanban-select-option', window.digikanban.kanban.selectOption);
-	$(document).on('click', '.validate-button:not(.butActionRefused)', window.digikanban.kanban.addObjectToColumn);
+	const disableActions = $('.disable-kanban-actions').val();
 
-	$('.info-box').attr('draggable', 'true');
+	if (!disableActions) {
+		$(document).on('change', '.kanban-select-option', window.digikanban.kanban.selectOption);
+		$(document).on('click', '.validate-button:not(.butActionRefused)', window.digikanban.kanban.addObjectToColumn);
 
-	$('.kanban-column-body').sortable({
-		connectWith: '.kanban-column-body',
-		placeholder: 'kanban-placeholder',
-		handle: '.info-box',
-		tolerance: 'pointer',
-		over: function() {
-			$(this).css('cursor', 'grabbing');
-		},
-		stop: function(event, ui) {
-			window.digikanban.kanban.saveCardOrder();
-		},
-	});
+		$('.info-box').attr('draggable', 'true');
 
-	const kanbanBoard = document.getElementById('kanban-board');
-	let isDragging = false;
-	let startX, scrollLeft;
+		$('.kanban-column-body').sortable({
+			connectWith: '.kanban-column-body',
+			placeholder: 'kanban-placeholder',
+			handle: '.info-box',
+			tolerance: 'pointer',
+			over: function() {
+				$(this).css('cursor', 'grabbing');
+			},
+			stop: function(event, ui) {
+				window.digikanban.kanban.saveCardOrder();
+			},
+		});
 
-	kanbanBoard.addEventListener('mousedown', (e) => {
-		const isClickInsideKanban = e.target.closest('.kanban-column, .kanban-column-header, .kanban-card, .kanban-select-option');
+		const kanbanBoard = document.getElementById('kanban-board');
+		let isDragging = false;
+		let startX, scrollLeft;
 
-		if (!isClickInsideKanban) {
-			isDragging = true;
-			kanbanBoard.classList.add('dragging');
-			startX = e.pageX - kanbanBoard.offsetLeft;
-			scrollLeft = kanbanBoard.scrollLeft;
-		}
-	});
+		kanbanBoard.addEventListener('mousedown', (e) => {
+			const isClickInsideKanban = e.target.closest('.kanban-column, .kanban-column-header, .kanban-card, .kanban-select-option');
 
-	kanbanBoard.addEventListener('mousemove', (e) => {
-		if (!isDragging) return;
-		e.preventDefault();
-		const x = e.pageX - kanbanBoard.offsetLeft;
-		const walk = (x - startX) * 1.5;
-		kanbanBoard.scrollLeft = scrollLeft - walk;
-	});
+			if (!isClickInsideKanban) {
+				isDragging = true;
+				kanbanBoard.classList.add('dragging');
+				startX = e.pageX - kanbanBoard.offsetLeft;
+				scrollLeft = kanbanBoard.scrollLeft;
+			}
+		});
 
-	kanbanBoard.addEventListener('mouseup', () => {
-		isDragging = false;
-		kanbanBoard.classList.remove('dragging');
-	});
+		kanbanBoard.addEventListener('mousemove', (e) => {
+			if (!isDragging) return;
+			e.preventDefault();
+			const x = e.pageX - kanbanBoard.offsetLeft;
+			const walk = (x - startX) * 1.5;
+			kanbanBoard.scrollLeft = scrollLeft - walk;
+		});
 
-	kanbanBoard.addEventListener('mouseleave', () => {
-		isDragging = false;
-		kanbanBoard.classList.remove('dragging');
-	});
+		kanbanBoard.addEventListener('mouseup', () => {
+			isDragging = false;
+			kanbanBoard.classList.remove('dragging');
+		});
+
+		kanbanBoard.addEventListener('mouseleave', () => {
+			isDragging = false;
+			kanbanBoard.classList.remove('dragging');
+		});
+	}
 };
 
 /**
