@@ -181,25 +181,14 @@ class Kanban extends SaturneObject
 	public function getObjectKanbanView($object, $objectMetadata) {
 		global $langs;
 
+		$userAffected = new User($this->db);
+		$projectAffected = new Project($this->db);
+
 		$objectTitle = method_exists($object, 'getNomUrl') ? $object->getNomUrl(1) : $object->ref;
 		$objectSubtitle = htmlspecialchars($object->label ?? '');
-		$objectPicto = $object->picto;
-		$moreData = '';
-
-		if ($object->element == 'project') {
-			$object->getLinesArray($user);
-			$tasksCounter = is_array($object->lines) ? count($object->lines) : 0;
-			if (is_array($object->lines) && !empty($object->lines)) {
-				foreach($object->lines as $task) {
-					$timeSpent += $task->duration_effective;
-				}
-			}
-			$projectDate = dol_print_date($object->date ?? time(), 'day');
-			$moreData = '<span class="kanban-data"><i class="fas fa-tasks"></i> ' . $tasksCounter . '</span> ';
-			$timeSpentInHoursAndMinutes = gmdate('H:i', $timeSpent);
-			$moreData .= '<span class="kanban-data"><i class="fas fa-clock"></i> ' . htmlspecialchars($timeSpentInHoursAndMinutes) . '</span> ';
-			$moreData .= '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . $projectDate . '</span>';
-		}
+		$moreFooterData = '';
+		$moreBodyData = '';
+		$moreHeaderData = '';
 
 		$nameField = $objectMetadata['name_field'];
 		if (strstr($nameField, ',')) {
@@ -215,6 +204,39 @@ class Kanban extends SaturneObject
 			$objectSubtitle = $object->$nameField;
 		}
 
+		if ($object->element == 'project') {
+			$object->getLinesArray($user);
+			$tasksCounter = is_array($object->lines) ? count($object->lines) : 0;
+			if (is_array($object->lines) && !empty($object->lines)) {
+				foreach($object->lines as $task) {
+					$timeSpent += $task->duration_effective;
+				}
+			}
+			$projectDate = dol_print_date($object->date ?? time(), 'day');
+			$moreHeaderData = $object->getLibStatut(2);
+			$moreFooterData = '<span class="kanban-data"><i class="fas fa-tasks"></i> ' . $tasksCounter . '</span> ';
+			$timeSpentInHoursAndMinutes = gmdate('H:i', $timeSpent);
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-clock"></i> ' . htmlspecialchars($timeSpentInHoursAndMinutes) . '</span> ';
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . $projectDate . '</span>';
+		} else if ($object->element == 'ticket') {
+			$moreHeaderData = $object->getLibStatut(2);
+			$moreFooterData = '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . dol_print_date($object->date_creation, 'day') . '</span>';
+			$userAffected->fetch($object->fk_user_assign);
+			$moreFooterData .= '<span class="kanban-data"> ' . $userAffected->getNomUrl(1) . '</span>';
+			$moreBodyData = '<br><span class="kanban-data"> ' .  $object->type_label . '</span>';
+		} else if ($object->element == 'propal') {
+			$moreHeaderData .= '<span class="kanban-data"> ' . $object->getLibStatut(2) . '</span>';
+			$projectAffected->fetch($object->fk_project);
+			$moreBodyData = '<br><span class="kanban-data"> ' . $projectAffected->getNomUrl(1) . '</span>';
+			$moreFooterData = '<span class="kanban-data"><i class="fas fa-calendar"></i> ' . dol_print_date($object->date_creation, 'day') . '</span>';
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-euro-sign"></i> ' . price($object->total_ht) . '</span>';
+		} else if ($object->element == 'societe') {
+			$moreHeaderData = $object->getLibStatut(2);
+			$moreFooterData .= '<span class="kanban-data"><i class="fas fa-envelope"></i> ' . $object->email . '</span>';
+			$moreFooterData .= '<br><span class="kanban-data"><i class="fas fa-phone"></i> ' . $object->phone . '</span>';
+		}
+
+
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 		$actionsButton = '
     <span class="fas fa-ellipsis-h edit-card actions-icon" onclick="window.digikanban.kanban.toggleCardMenu(this)"></span>
@@ -224,20 +246,21 @@ class Kanban extends SaturneObject
         </div>
     </div>
 ';
-
 		$return = '<div>';
 		$return .= '<div class="kanban-card info-box ">';
 		if ($selected >= 0) {
 			$return .= '<input hidden id="cb'.$object->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= '<div class="kanban-card-header">';
-		$return .= '<span class="kanban-card-ref">' . $objectTitle . '&nbsp;' . $actionsButton .'</span>';
+		$return .= '<span class="kanban-card-ref">' . $objectTitle . '&nbsp;' . $moreHeaderData . '</span>';
+		$return .= '<span class="kanban-card-action">' . $actionsButton .'</span>';
 		$return .= '</div>';
 		$return .= '<div class="kanban-card-body">';
 		$return .= '<span class="kanban-card-subtitle">' . $objectSubtitle . '</span>';
+		$return .= '<span class="kanban-card-subtitle">' . $moreBodyData . '</span>';
 		$return .= '</div>';
 		$return .= '<div class="kanban-card-footer">';
-		$return .= $moreData;
+		$return .= $moreFooterData;
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
