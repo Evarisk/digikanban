@@ -1,0 +1,83 @@
+/* Styles pour les kanbans */
+.classic-kanban-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px;
+  justify-content: flex-start; /* Aligner les cartes à gauche */
+}
+
+.classic-kanban-card {
+  display: flex;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  width: calc(100% - 40px); /* Par défaut : une carte par ligne */
+  max-width: 100%; /* Évite de dépasser */
+  min-height: 150px; /* Hauteur minimale pour les cartes */
+}
+
+.classic-kanban-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  background-color: #f1f1f1;
+}
+
+.classic-kanban-card-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.img-picto {
+  flex: 1 1 50%; /* L'image occupe 50% de l'espace */
+  max-width: 120px; /* Limite pour empêcher qu'elle soit trop grande */
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-picto img {
+  max-width: 100%;
+  height: 100px; /* Taille explicite pour agrandir l'image */
+}
+
+.classic-kanban-text {
+  flex: 1 1 50%; /* Le texte occupe l'autre moitié */
+  padding-left: 15px; /* Évite que le texte touche l'image */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.classic-kanban-text h2 {
+  margin: 0;
+  font-size: 1.5em; /* Agrandit le texte */
+  color: #333;
+  text-align: left;
+}
+
+/* Responsive design */
+@media (min-width: 576px) {
+  .classic-kanban-card {
+    width: calc(50% - 20px); /* 2 cartes par ligne */
+  }
+}
+
+@media (min-width: 768px) {
+  .classic-kanban-card {
+    width: calc(33.33% - 20px); /* 3 cartes par ligne */
+  }
+}
+
+@media (min-width: 1200px) {
+  .classic-kanban-card {
+    width: calc(25% - 20px); /* 4 cartes par ligne */
+  }
+}
